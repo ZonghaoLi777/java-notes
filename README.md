@@ -1,7 +1,7 @@
 # Java 学习笔记
 Java 学习笔记
 
-☞ [1 Java概述]  
+☞ [1 Java概述](https://github.com/AcherLi/java-notes/blob/master/doc/1%20Java%E6%A6%82%E8%BF%B0.md)  
 ☞ [2 变量、运算符]  
 ☞ [3 Scanner、Random、流程控制语句]  
 ☞ [4 数组]  
