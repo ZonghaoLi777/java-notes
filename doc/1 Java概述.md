@@ -1,4 +1,4 @@
-# Java开发环境搭建
+# Java概述
   JDK：它是Java开发运行环境，在程序员的电脑上当然要安装JDK  
   JRE：Java Runtime Environment它是Java运行环境，如果你不需要开发只需要运行Java程序，那么你可以安装JRE。例如程序员开发出的程序最终卖给了用户，用户不用开发，只需要运行程序，所以用户在电脑上安装JRE即可。  
   JDK包含了JRE。  
