@@ -98,3 +98,21 @@
   ```  
     + continue语句
       - continue语句用在循环语句中，它的作用是终止本次循环，执行下一次循环
+  * 选择结构switch
+  ```
+  switch (表达式){
+    case 目标值1:
+      执行语句1
+      break;
+    case 目标值2:
+      执行语句2
+      break;
+    ．．．．．．
+    case 目标值n:
+      执行语句n
+      break;
+    default:
+      执行语句n+1
+      break;
+  }
+  ```  
