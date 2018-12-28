@@ -2,7 +2,7 @@
 Java 学习笔记
 
 ☞ [1 Java概述](https://github.com/AcherLi/java-notes/blob/master/doc/1%20Java%E6%A6%82%E8%BF%B0.md)  
-☞ [2 变量、运算符]  
+☞ [2 变量、运算符](https://github.com/AcherLi/java-notes/blob/master/doc/2%20%E5%8F%98%E9%87%8F%E3%80%81%E8%BF%90%E7%AE%97%E7%AC%A6.md)  
 ☞ [3 Scanner、Random、流程控制语句]  
 ☞ [4 数组]  
 ☞ [5 方法]  
