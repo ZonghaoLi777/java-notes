@@ -3,7 +3,7 @@ Java 学习笔记
 
 ☞ [1 Java概述](https://github.com/AcherLi/java-notes/blob/master/doc/1%20Java%E6%A6%82%E8%BF%B0.md)  
 ☞ [2 变量、运算符](https://github.com/AcherLi/java-notes/blob/master/doc/2%20%E5%8F%98%E9%87%8F%E3%80%81%E8%BF%90%E7%AE%97%E7%AC%A6.md)  
-☞ [3 Scanner、Random、流程控制语句]  
+☞ [3 Scanner、Random、流程控制语句](https://github.com/AcherLi/java-notes/blob/master/doc/3%20Scanner%E3%80%81Random%E3%80%81%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5.md)  
 ☞ [4 数组]  
 ☞ [5 方法]  
 ☞ [6 自定义类、ArrayList集合]  
