@@ -208,10 +208,10 @@
 		+ 导包的格式：
 			- import 包名.类名;
   * 权限修饰符
-		+ public : 公共的
-		+ protected: 受保护的
-		+   
-		+ private : 私有的
+    + public : 公共的
+    + protected: 受保护的
+    +  
+    + private : 私有的  
   　　　　　　　　　public　protected　默认的　private  
 	在当前类中　　　　Y　　　　Y　　　　　Y　　　　Y  
 	同一包中的其他类　Y　　　　Y　　　　　Y  
