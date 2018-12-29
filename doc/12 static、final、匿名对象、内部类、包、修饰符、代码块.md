@@ -212,11 +212,11 @@
 		+ protected: 受保护的
 		+   
 		+ private : 私有的
-  　　　　　　　　　public　protected　默认的　private
-	在当前类中　　　　Y　　　　Y　　　　　Y　　　　Y
-	同一包中的其他类　Y　　　　Y　　　　　Y
-	不同包中的子类　　Y　　　　Y
-	不同包中的其他类　Y
+  　　　　　　　　　public　protected　默认的　private  
+	在当前类中　　　　Y　　　　Y　　　　　Y　　　　Y  
+	同一包中的其他类　Y　　　　Y　　　　　Y  
+	不同包中的子类　　Y　　　　Y  
+	不同包中的其他类　Y  
 
   * 代码块：
 		+ 局部代码块：定义在方法中的，用来限制变量的作用范围
