@@ -207,7 +207,7 @@
 			- cn.zhli13.Demo d = new cn.zhli13.Demo();
 		+ 导包的格式：
 			- import 包名.类名;
-  * 权限修饰符
+  * 权限修饰符  
 		+ public : 公共的
 		+ protected: 受保护的
 		+   
