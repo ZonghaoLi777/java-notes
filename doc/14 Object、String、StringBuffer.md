@@ -1,3 +1,6 @@
 # Objcet
-  Object类是Java语言中的根类，即所有类的父类。它中描述的所有方法子类都可以使用。所有类在创建对象的时候，最终找的父类就是Object。  
+  Object类是Java语言中的根类，即所有类的父类。它中描述的所有方法子类都可以使用。所有类在创建对象的时候，最终找的父类就是Object。 
+## equals 方法
+  ![text](img/doc0401.png?raw=true)  
+  
   

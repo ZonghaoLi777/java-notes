@@ -7,7 +7,7 @@
 ## File 类的出现
   打开API，搜索File类。阅读其描述：File文件和目录路径名的抽象表示形式。即，Java中把文件或者目录（文件夹）都封装成File对象。也就是说如果我们要去操作硬盘上的文件，或者文件夹只要找到File这个类即可。那么我们就要研究研究File这个类中都有那些功能可以操作文件或者文件夹呢？  
 ## 类的构造函数
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2201.png?raw=true)  
+  ![text](img/doc2201.png?raw=true)  
   * 通过构造方法创建File对象，我们进行演示：    
   ```
   public class FileDemo {
@@ -29,7 +29,7 @@
   ```  
 ## File类的获取
   创建完了File对象之后，那么File类中都有如下常用方法，可以获取文件相关信息  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2202.png?raw=true)  
+  ![text](img/doc2202.png?raw=true)  
   * 示例  
   ```
   public class FileMethodDemo {
@@ -55,7 +55,7 @@
 ## 文件和文件夹的创建删除等
   经常上面介绍，我们知道可以通过File获取到文件名称，文件路径(目录)等信息。  
   接下来演示使用File类创建、删除文件等操作。  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2203.png?raw=true)  
+  ![text](img/doc2203.png?raw=true)  
   * 示例  
   ```
   public class FileMethodDemo2 {
@@ -93,7 +93,7 @@
   ```  
 ## listFiles()方法介绍
   文件都存放在目录（文件夹）中，那么如何获取一个目录中的所有文件或者目录中的文件夹呢？那么我们先想想，一个目录中可能有多个文件或者文件夹，那么如果File中有功能获取到一个目录中的所有文件和文件夹，那么功能得到的结果要么是数组，要么是集合。我们开始查阅API。  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2204.png?raw=true)  
+  ![text](img/doc2204.png?raw=true)  
   * 示例  
   ```
   public class FileMethodDemo3 {
@@ -119,8 +119,8 @@
   通过listFiles()方法，我们可以获取到一个目录下的所有文件和文件夹，但能不能对其进行过滤呢？比如我们只想要一个目录下的指定扩展名的文件，或者包含某些关键字的文件夹呢？  
   我们是可以先把一个目录下的所有文件和文件夹获取到，并遍历当前获取到所有内容，遍历过程中在进行筛选，但是这个动作有点麻烦，Java给我们提供相应的功能来解决这个问题。  
   查阅File类的API，在查阅时发现File类中重载的listFiles方法，并且接受指定的过滤器。  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2205.png?raw=true)  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2206.png?raw=true)  
+  ![text](img/doc2205.png?raw=true)  
+  ![text](img/doc2206.png?raw=true)  
   * 示例  
   ```
   public class FileDemo2 {
@@ -147,8 +147,8 @@
   }
   ```  
   在查阅API时，我们发现，在listFiles(FileFilter filter) 也可以接受一个FileFilter过滤器，它和我们讲的FilenameFilter有啥区别呢？  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2207.png?raw=true)  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc2208.png?raw=true)  
+  ![text](img/doc2207.png?raw=true)  
+  ![text](img/doc2208.png?raw=true)  
   FilenameFilter过滤器中的accept方法接受两个参数，一个当前文件或文件夹所在的路径，一个是当前文件或文件夹对象的名称。  
   FileFilter 过滤器中的accept方法接受一个参数，这个参数就当前文件或文件夹对象  
   当我们需要过滤文件名称时就可以使用FilenameFilter这个过滤器，当我们想对当前文件或文件夹进行过滤，就可以使用FileFilter ，比如需要当前目录下的所有文件夹，就可以使用FileFilter 过滤器。  

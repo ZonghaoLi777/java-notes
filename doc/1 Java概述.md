@@ -6,10 +6,10 @@
   平台指的是操作系统 （Windows，Linux，Mac）。  
   Java程序可以在任意操作系统上运行，一次编写到处运行  
   实现跨平台需要依赖Java的虚拟机 JVM （Java Virtual Machine）  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0101.png?raw=true)  
+  ![text](img/doc0101.png?raw=true)  
 # Hello World
   java程序编译和运行
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0102.png?raw=true)  
+  ![text](img/doc0102.png?raw=true)  
   * 源文件：编写Java源文件（我们也称之为源代码文件），它的扩展名为.java；
   * 编译：然后通过编译器把源文件编译成字节码文件，字节码文件扩展名为.class；
   * 运行：最后使用解释器来运行字节码文件。
@@ -20,7 +20,7 @@
 ## 关键字
   关键字是被Java语言赋予特殊含义，具有专门用途的单词，比如之前接触的class，public，static，void均为Java已经预设好的。你可以先把Java关键字理解为“命令”！  
 　Java中关键字均为小写，下面是Java中所有关键字，你不需要去背，在今后的学习中重要的关键字会不断的出来。  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0103.png?raw=true)  
+  ![text](img/doc0103.png?raw=true)  
 ## 标识符
   其实标识符就是名称的意思，所有的名称都统称为标识符。Java中经常要定义类、方法、变量（后面会学习到），在定义他们时总要给它们起名字，这些名字就是标识符  
   * 组成元素
@@ -34,7 +34,7 @@
 # 数据
 ## 数据类型
   在生活中数据是有类型的，例如人的姓名是字符串类型，人的年龄是正整数类型。在Java中数据也是有类型的（任0何数据必然会有类型），下面是Java中数据的类型：  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0104.png?raw=true)  
+  ![text](img/doc0104.png?raw=true)  
   基本数据类型是Java语言中内置的类型，分别是整数类型、小数类型、字符类型、布尔类型。这四类基本类型是最简单、最基础的类型。  
   引用数据类型是强大的数据类型，它是基于基本数据类型创建的。JavaSE中提供了一个超级类库，类库中包含了近万种引用数据类型。不过现在我们先要学习的是基本类型！  
 ## 常量

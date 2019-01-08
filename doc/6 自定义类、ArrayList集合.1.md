@@ -36,7 +36,7 @@
   * 集合中存储的元素，只能为<>括号中指定的数据类型元素；
   * “<要存储元素的数据类型>”中的数据类型必须是引用数据类型，不能是基本数据类型；  
   下面给出8种基本数据类型所对应的引用数据类型表示形式:  
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0601.png?raw=true)  
+  ![text](img/doc0601.png?raw=true)  
   * 存储String类型的元素
     + ArrayList<String> list = new ArrayList<String>();
   * 存储int类型的数据
@@ -44,7 +44,7 @@
   * 存储Phone类型的数据
     + ArrayList<Phone> list = new ArrayList<Phone>();
 ## 集合中常用方法
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0602.png?raw=true)  
+  ![text](img/doc0602.png?raw=true)  
   强调一点，ArrayList集合相当于是一个长度可变的数组，所以访问集合中的元素也是采用索引方式访问，第一个元素存储在索引0的位置，第二个元素存储在索引1的位置，依次类推  
 ## 集合的遍历
   通过集合遍历，得到集合中每个元素，这是集合中最常见的操作。集合的遍历与数组的遍历很像，都是通过索引的方式  
@@ -69,7 +69,7 @@
   }
   ```  
 ## 集合中的常用方法补充
-  ![text](https://github.com/AcherLi/Java/blob/master/img/doc0603.png?raw=true)  
+  ![text](img/doc0603.png?raw=true)  
   * boolean add（int index,  Object obj）
     + 功能：在集合中指定index位置，添加新元素obj
     + 功能说明：假设集合list中有元素[“java”,“javaEE”]，当使用add(1，“javaWeb”)后，集合list中的元素为[“java”,“javaWeb”,“JavaEE”]。
