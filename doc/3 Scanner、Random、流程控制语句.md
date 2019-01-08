@@ -22,14 +22,14 @@
     + 创建实例格式：Random 变量名 = new Random();
 # 流程控制语句
   * 选择结构if  
-  ```
+  ```java
   if (判断条件){
     执行语句1
     ……
   }
-  ```  
-  * if…else语句
   ```
+  * if…else语句
+  ```java
   if (判断条件){
     执行语句1
     ……
@@ -39,7 +39,7 @@
   }
   ```  
   * if…else if…else语句  
-  ```
+  ```java
   if (判断条件1) {
     执行语句1
   } else if (判断条件2) {
@@ -55,21 +55,21 @@
   * 选择结构if语句与三元运算转换  
   判断条件 ? 表达式1 : 表达式2  
   * 循环语句while
-  ```
+  ```java
   while(循环条件){
   执行语句
   ………
   }
   ``` 
   * 循环语句for
-  ```
+  ```java
   for（初始化表达式; 循环条件; 操作表达式）{
     执行语句
     ………
   }
   ```  
   * 循环语句do…while
-  ```
+  ```java
   do {
   执行语句
   ………
@@ -80,7 +80,7 @@
       - 在switch条件语句和循环语句中都可以使用break语句。当它出现在switch条件语句中时，作用是终止某个case并跳出switch结构。当它出现在循环语句中，作用是跳出循环语句，执行后面的代码。
     + 标记
       - 当break语句出现在嵌套循环中的内层循环时，它只能跳出内层循环，如果想使用break语句跳出外层循环则需要对外层循环添加标记。
-  ```
+  ```java
   public class BreakDemo02 {
     public static void main(String[] args) {
       int i, j; // 定义两个循环变量
@@ -99,7 +99,7 @@
   * continue语句
     + continue语句用在循环语句中，它的作用是终止本次循环，执行下一次循环
   * 选择结构switch
-  ```
+  ```java
   switch (表达式){
     case 目标值1:
       执行语句1

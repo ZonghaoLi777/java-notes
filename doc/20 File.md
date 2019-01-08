@@ -9,7 +9,7 @@
 ## 类的构造函数
   ![text](img/doc2201.png?raw=true)  
   * 通过构造方法创建File对象，我们进行演示：    
-  ```
+  ```java
   public class FileDemo {
     public static void main(String[] args) {
       //File构造函数演示
@@ -31,7 +31,7 @@
   创建完了File对象之后，那么File类中都有如下常用方法，可以获取文件相关信息  
   ![text](img/doc2202.png?raw=true)  
   * 示例  
-  ```
+  ```java
   public class FileMethodDemo {
     public static void main(String[] args) {
       //创建文件对象
@@ -57,7 +57,7 @@
   接下来演示使用File类创建、删除文件等操作。  
   ![text](img/doc2203.png?raw=true)  
   * 示例  
-  ```
+  ```java
   public class FileMethodDemo2 {
     public static void main(String[] args) throws IOException {
       // 对文件或者文件加进行操作。
@@ -95,7 +95,7 @@
   文件都存放在目录（文件夹）中，那么如何获取一个目录中的所有文件或者目录中的文件夹呢？那么我们先想想，一个目录中可能有多个文件或者文件夹，那么如果File中有功能获取到一个目录中的所有文件和文件夹，那么功能得到的结果要么是数组，要么是集合。我们开始查阅API。  
   ![text](img/doc2204.png?raw=true)  
   * 示例  
-  ```
+  ```java
   public class FileMethodDemo3 {
     public static void main(String[] args) {
       File dir = new File("e:\\java_code");
@@ -122,7 +122,7 @@
   ![text](img/doc2205.png?raw=true)  
   ![text](img/doc2206.png?raw=true)  
   * 示例  
-  ```
+  ```java
   public class FileDemo2 {
     public static void main(String[] args) {
       //获取扩展名为.java所有文件
@@ -138,7 +138,7 @@
   }
   ```  
   * 自定类继承FilenameFilter过滤器接口   
-  ```
+  ```java
   //定义类实现文件名称FilenameFilter过滤器
   class MyFileFilter implements FilenameFilter{
     public boolean accept(File dir, String name) {
@@ -153,7 +153,7 @@
   FileFilter 过滤器中的accept方法接受一个参数，这个参数就当前文件或文件夹对象  
   当我们需要过滤文件名称时就可以使用FilenameFilter这个过滤器，当我们想对当前文件或文件夹进行过滤，就可以使用FileFilter ，比如需要当前目录下的所有文件夹，就可以使用FileFilter 过滤器。  
   * 示例  
-  ```
+  ```java
   public class FileDemo2 {
     public static void main(String[] args) {
       //获取扩展名为.java所有文件
@@ -169,7 +169,7 @@
   }
   ```  
   * 自定义类继承FileFilter过滤器接口  
-  ```
+  ```java
   class FileFileterByDir implements FileFilter{
     public boolean accept(File pathname) {
       return pathname.isDirectory();

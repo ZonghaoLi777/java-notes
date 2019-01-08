@@ -10,7 +10,7 @@
   }
   ```  
   通过类的定义格式，来进行手机类的描述，如下所示  
-  ```
+  ```java
   public class Phone {
     /*
     * 属性
@@ -48,7 +48,7 @@
   强调一点，ArrayList集合相当于是一个长度可变的数组，所以访问集合中的元素也是采用索引方式访问，第一个元素存储在索引0的位置，第二个元素存储在索引1的位置，依次类推  
 ## 集合的遍历
   通过集合遍历，得到集合中每个元素，这是集合中最常见的操作。集合的遍历与数组的遍历很像，都是通过索引的方式  
-  ```
+  ```java
   import java.util.ArrayList;
   public class ArrayListDemo02 {
   	public static void main(String[] args) {
