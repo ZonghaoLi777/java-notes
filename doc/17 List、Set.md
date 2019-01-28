@@ -1,423 +1,269 @@
-# 异常
-  什么是异常？Java代码运行时期发生的问题就是异常  
-  在Java中，把异常信息封装成了一个类。当出现了问题时，就会创建异常类对象并抛出异常相关的信息（如异常出现的位置、原因等）。
-## 异常的继承体系
-  在Java中使用Exception类来描述异常。  
-  ![text](img/doc2101.png?raw=true)  
-  查看API中Exception的描述，Exception 类及其子类是 Throwable 的一种形式，它用来表示java程序中可能会产生的异常，并要求对产生的异常进行合理的异常处理。  
-
-  继续观察，我们可以发现Exception有继承关系，它的父类是Throwable。Throwable是Java 语言中所有错误或异常的超类，即祖宗类。  
-  ![text](img/doc2102.png?raw=true)
-  ![text](img/doc2103.png?raw=true)  
-  另外，在异常Exception类中，有一个子类要特殊说明一下，RuntimeException子类，RuntimeException及其它的子类只能在Java程序运行过程中出现。  
-  ![text](img/doc2104.png?raw=true)  
-  我们再来观察Throwable类，能够发现与异常Exception平级的有一个Error，它是Throwable的子类，它用来表示java程序中可能会产生的严重错误。解决办法只有一个，修改代码避免Error错误的产生。  
-  ![text](img/doc2105.png?raw=true)  
-
-##### 异常继承体系总结:
-  Throwable: 它是所有错误与异常的超类（祖宗类）  
-  　| - Error 错误  
-  　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-  　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
-
-## 异常与错误的区别
-  **异常**：指程序在编译、运行期间发生了某种异常(XxxException)，我们可以对异常进行具体的处理。若不处理异常，程序将会结束运行  
-  
-  * 异常的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[3];
-    System.out.println(arr[0]);
-    System.out.println(arr[3]);
-    // 该句运行时发生了数组索引越界异常ArrayIndexOutOfBoundsException，由于没有处理异常，导致程序无法继续执行，程序结束。
-    System.out.println("over"); // 由于上面代码发生了异常，此句代码不会执行
-  }
-  ```  
-  **错误**：指程序在运行期间发生了某种错误(XxxError)，Error错误通常没有具体的处理方式，程序将会结束运行。Error错误的发生往往都是系统级别的问题，都是jvm所在系统发生的，并反馈给jvm的。我们无法针对处理，只能修正代码。  
-  * 错误的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[1024*1024*100];
-    // 该句运行时发生了内存溢出错误OutOfMemoryError，开辟了过大的数组空间，导致JVM在分配数组空间时超出了JVM内存空间，直接发生错误。
-  }
-  ```  
-## 异常的产生过程解析
-  先运行下面的程序，程序会产生一个数组索引越界异常ArrayIndexOfBoundsException。我们通过图解来解析下异常产生的过程。  
-  * 工具类
-  ```
-  class ArrayTools{
-    // 对给定的数组通过给定的角标获取元素。
-    public static int getElement(int[] arr, int index)	{
-      int element = arr[index];
-      return element;
+# List接口  
+查阅API，看List的介绍。有序的 collection（也称为序列）。此接口的用户可以对列表中每个元素的插入位置进行精确地控制。用户可以根据元素的整数索引（在列表中的位置）访问元素，并搜索列表中的元素。与 set 不同，列表通常允许重复的元素。  
+List接口：   
+* 它是一个元素存取有序的集合。例如，存元素的顺序是11、22、33。那么集合中，元素的存储就是按照11、22、33的顺序完成的）。
+* 它是一个带有索引的集合，通过索引就可以精确的操作集合中的元素（与数组的索引是一个道理）。
+* 集合中可以有重复的元素，通过元素的equals方法，来比较是否为重复的元素。  
+List接口的常用子类有：  
+* ArrayList集合
+* LinkedList集合  
+![text](img/doc1701.png?raw=true)  
+* 增加元素方法
+  + add(Object e)：向集合末尾处，添加指定的元素 
+  + add(int index, Object e)：向集合指定索引处，添加指定的元素，原有元素依次后移
+* 删除元素删除
+  + remove(Object e)：将指定元素对象，从集合中删除，返回值为被删除的元素
+  + remove(int index)：将指定索引处的元素，从集合中删除，返回值为被删除的元素
+* 替换元素方法
+  + set(int index, Object e)：将指定索引处的元素，替换成指定的元素，返回值为替换前的元素
+* 查询元素方法
+  + get(int index)：获取指定索引处的元素，并返回该元素  
+## Iterator的并发修改异常
+在list集合迭代元素中，对元素进行判断，一旦条件满足就添加一个新元素。代码如下  
+```java
+public class IteratorDemo {
+//在list集合迭代元素中，对元素进行判断，一旦条件满足就添加一个新元素
+	public static void main(String[] args) {
+		//创建List集合
+		List<String> list = new ArrayList<String>();
+		//给集合中添加元素
+		list.add("abc1");
+		list.add("abc2");
+		list.add("abc3");
+		list.add("abc4");
+		//迭代集合，当有元素为"abc2"时，集合加入新元素"itcast"
+		Iterator<String> it = list.iterator();
+		while(it.hasNext()){
+			String str = it.next();
+			//判断取出的元素是否是"abc2"，是就添加一个新元素
+			if("abc2".equals(str)){
+				list.add("itcast");// 该操作会导致程序出错
+			}
+		}
+		//打印容器中的元素
+		System.out.println(list);
+	}
+}
+```
+运行上述代码发生了错误 java.util.ConcurrentModificationException这是什么原因呢？
+在迭代过程中，使用了集合的方法对元素进行操作。导致迭代器并不知道集合中的变化，容易引发数据的不确定性。
+并发修改异常解决办法：在迭代时，不要使用集合的方法操作元素。  
+那么想要在迭代时对元素操作咋办？通过ListIterator迭代器操作元素是可以的，ListIterator的出现，解决了使用Iterator迭代过程中可能会发生的错误情况。  
+## List集合存储数据的结构
+List接口下有很多个集合，它们存储元素所采用的结构方式是不同的，这样就导致了这些集合有它们各自的特点，供给我们在不同的环境下进行使用。数据存储的常用结构有：堆栈、队列、数组、链表。我们分别来了解一下：  
+* 堆栈，采用该结构的集合，对元素的存取有如下的特点：
+  + 先进后出（即，存进去的元素，要在后它后面的元素依次取出后，才能取出该元素）。例如，子弹压进弹夹，先压进去的子弹在下面，后压进去的子弹在上面，当开枪时，先弹出上面的子弹，然后才能弹出下面的子弹。
+  + 栈的入口、出口的都是栈的顶端位置
+  + 压栈：就是存元素。即，把元素存储到栈的顶端位置，栈中已有元素依次向栈底方向移动一个位置。
+  + 弹栈：就是取元素。即，把栈的顶端位置元素取出，栈中已有元素依次向栈顶方向移动一个位置。    
+![text](img/doc1702.png?raw=true)  
+* 队列，采用该结构的集合，对元素的存取有如下的特点：
+  + 先进先出（即，存进去的元素，要在后它前面的元素依次取出后，才能取出该元素）。例如，安检。排成一列，每个人依次检查，只有前面的人全部检查完毕后，才能排到当前的人进行检查。
+  + 队列的入口、出口各占一侧。例如，下图中的左侧为入口，右侧为出口。  
+![text](img/doc1703.png?raw=true)  
+* 数组，采用该结构的集合，对元素的存取有如下的特点：
+  + 查找元素快：通过索引，可以快速访问指定位置的元素
+  + 增删元素慢：
+    - 指定索引位置增加元素：需要创建一个新数组，将指定新元素存储在指定索引位置，再把原数组元素根据索引，复制到新数组对应索引的位置。如下图
+    - 指定索引位置删除元素：需要创建一个新数组，把原数组元素根据索引，复制到新数组对应索引的位置，原数组中指定索引位置元素不复制到新数组中。如下图  
+![text](img/doc1704.png?raw=true)  
+* 链表，采用该结构的集合，对元素的存取有如下的特点：
+  + 多个节点之间，通过地址进行连接。例如，多个人手拉手，每个人使用自己的右手拉住下个人的左手，依次类推，这样多个人就连在一起了。
+  + 查找元素慢：想查找某个元素，需要通过连接的节点，依次向后查找指定元素
+  + 增删元素快：
+    - 增加元素：操作如左图，只需要修改连接下个元素的地址即可。
+    - 删除元素：操作如右图，只需要修改连接下个元素的地址即可。  
+![text](img/doc1705.png?raw=true)  
+## ArrayList集合
+ArrayList集合数据存储的结构是数组结构。元素增删慢，查找快，由于日常开发中使用最多的功能为查询数据、遍历数据，所以ArrayList是最常用的集合。  
+许多程序员开发时非常随意地使用ArrayList完成任何需求，并不严谨，这种用法是不提倡的。  
+## LinkedList集合
+LinkedList集合数据存储的结构是链表结构。方便元素添加、删除的集合。实际开发中对一个集合元素的添加与删除经常涉及到首尾操作，而LinkedList提供了大量首尾操作的方法。如下图  
+![text](img/doc1706.png?raw=true)  
+LinkedList是List的子类，List中的方法LinkedList都是可以使用，这里就不做详细介绍，我们只需要了解LinkedList的特有方法即可。在开发时，LinkedList集合也可以作为堆栈，队列的结构使用。  
+方法演示：  
+```java
+LinkedList<String> link = new LinkedList<String>();
+		//添加元素
+		link.addFirst("abc1");
+		link.addFirst("abc2");
+		link.addFirst("abc3");
+		//获取元素
+		System.out.println(link.getFirst());
+		System.out.println(link.getLast());
+		//删除元素
+		System.out.println(link.removeFirst());
+		System.out.println(link.removeLast());
+		
+		while(!link.isEmpty()){ //判断集合是否为空
+			System.out.println(link.pop()); //弹出集合中的栈顶元素
     }
-  }
-  ```  
-  * 测试类  
-  ```
-  class ExceptionDemo2 {
-    public static void main(String[] args) 	{
-      int[] arr = {34, 12, 67};
-      int num = ArrayTools.getElement(arr, 4)
-      System.out.println("num=" + num);
-      System.out.println("over");
-    }
-  }
-  ```  
-  * 上述程序执行过程图解：  
-  ![text](img/doc2106.png?raw=true)  
-## 抛出异常throw
-  在编写程序时，我们必须要考虑程序出现问题的情况。比如，在定义方法时，方法需要接受参数。那么，当调用方法使用接受到的参数时，首先需要先对参数数据进行合法的判断，数据若不合法，就应该告诉调用者，传递合法的数据进来。这时需要使用抛出异常的方式来告诉调用者。 
-  **在java中，提供了一个throw关键字，它用来抛出一个指定的异常对象。那么，抛出一个异常具体如何操作呢？**  
-  * 1. 创建一个异常对象。封装一些提示信息(信息可以自己编写)。
-  * 2. 需要将这个异常对象告知给调用者。怎么告知呢？怎么将这个异常对象传递到调用者处呢？通过关键字throw就可以完成。throw 异常对象；  
-  throw用在方法内，用来抛出一个异常对象，将这个异常对象传递到调用者处，并结束当前方法的执行。  
-  **使用格式**：  
-  例如：  
-  ```
-  throw new NullPointerException("要访问的arr数组不存在");
-  throw new ArrayIndexOutOfBoundsException("该索引在数组中不存在，已超出范围");
-  ```  
-  * 下面是异常类ArrayIndexOutOfBoundsException与NullPointerException的构造方法  
-  ![text](img/doc2107.png?raw=true)  
-
-  学习完抛出异常的格式后，我们通过下面程序演示下throw的使用。  
-  * 编写工具类，提供获取数组指定索引处的元素值  
-  ```
-  class ArrayTools{
-    //通过给定的数组，返回给定的索引对应的元素值。
-    public static int getElement(int[] arr,int index)	{
-      /**
-      * 若程序出了异常，JVM它会打包异常对象并抛出。但是它所提供的信息不够给力。
-      * 想要更清晰，需要自己抛出异常信息。
-      * 下面判断条件如果满足，当执行完throw抛出异常对象后，方法已经无法继续运算。
-      * 这时就会结束当前方法的执行，并将异常告知给调用者。
-      * 这时就需要通过异常来解决。
-      */
-      if(arr==null){
-        throw new NullPointerException("arr指向的数组不存在");
-      }
-      if(index<0 || index>=arr.length){
-        throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-      }
-      int element = arr[index];
-      return element;
-    }
-  }
-  ```  
-  * 测试类
-  ```
-  class ExceptionDemo3 {
-    public static void main(String[] args) {
-      int[] arr = {34,12,67}; //创建数组
-      int num = ArrayTools.getElement(null,2);// 调用方法，获取数组中指定索引处元素
-      //int num = ArrayTools.getElement(arr,5);// 调用方法，获取数组中指定索引处元素
-      System.out.println("num="+num);//打印获取到的元素值
-    }
-  }
-  ```
-## 声明异常throws
-  声明：将问题标识出来，报告给调用者。如果方法内通过throw抛出了编译时异常，而没有捕获处理（稍后讲解该方式），那么必须通过throws进行声明，让调用者去处理。  
-  声明异常格式：  
-  ```
-  修饰符 返回值类型 方法名(参数) throws 异常类名1,异常类名2… {   }
-  ```  
-  声明异常的代码演示：  
-  ```
-  class Demo{
-    /**
-    * 如果定义功能时有问题发生需要报告给调用者。可以通过在方法上使用throws关键字进行声明。
-    */
-    public void show(int x) throws Exception	{
-      if(x > 0){
-        throw new Exception();
-      } else {
-        System.out.println("show run");
-      }
-    }
-  }
-  ```  
-  throws用于进行异常类的声明，若该方法可能有多种异常情况产生，那么在throws后面可以写多个异常类，用逗号隔开。  
-  多个异常的情况，例如:  
-  ```
-  public static int getElement(int[] arr,int index) throws NullPointerException, ArrayIndexOutOfBoundsException {
-    if(arr == null){
-      throw new NullPointerException("arr指向的数组不存在");
-    }
-    if(index < 0 || index >= arr.length){
-      throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-    }
-    int element = arr[index];
-    return element;
-  }
-  ```  
-## 捕获异常try…catch…finally
-  捕获：Java中对异常有针对性的语句进行捕获，可以对出现的异常进行指定方式的处理  
-  **捕获异常格式：**  
-  ```
-  try {
-    //需要被检测的语句。
-  }
-  catch(异常类 变量) { //参数。
-    //异常的处理语句。
-  }
-  finally {
-    //一定会被执行的语句。
-  }
-  ```  
-  **try**：该代码块中编写可能产生异常的代码。  
-  **catch**：用来进行某种异常的捕获，实现对捕获到的异常进行处理。  
-  **finally**：有一些特定的代码无论异常是否发生，都需要执行。另外，因为异常会引发程序跳转，导致有些语句执行不到。而finally就是解决这个问题的，在finally代码块中存放的代码都是一定会被执行的。  
-  演示如下：  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){ //throws ArrayIndexOutOfBoundsException
-      try	{
-        int[] arr = new int[3];
-        System.out.println( arr[5] );// 会抛出ArrayIndexOutOfBoundsException
-        当产生异常时，必须有处理方式。要么捕获，要么声明。
-      } catch (ArrayIndexOutOfBoundsException e) { //括号中需要定义什么呢？try中抛出的是什么异常，在括号中就定义什么异常类型。 
-        System.out.println("异常发生了");
-      } finally {
-        arr = null; //把数组指向null，通过垃圾回收器，进行内存垃圾的清除
-      }
-      System.out.println("程序运行结果");
-    }
-  }
-  ```  
-## try…catch…finally异常处理的组合方式  
-  * try catch finally组合：检测异常，并传递给catch处理，并在finally中进行资源释放。  
-  * try catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对异常进行捕获处理。 
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (Exception e){
-      //处理方式	
-    }
-  }
-  ```  
-  * 一个try 多个catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对每种异常信息进行不同的捕获处理。  
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (XxxException e) {
-      //处理方式	
-    } catch (YyyException e) {
-      //处理方式	
-    } catch (ZzzException e) {
-      //处理方式	
-    }
-  }
-  ```  
-  注意:这种异常处理方式，要求多个catch中的异常不能相同，并且若catch中的多个异常之间有子父类异常的关系，那么子类异常要求在上面的catch处理，父类异常在下面的catch处理。  
-  * try finally 组合: 对代码进行异常检测，检测到异常后因为没有catch，所以一样会被默认jvm抛出。异常是没有捕获处理的。但是功能所开启资源需要进行关闭，所有finally。只为关闭资源。  
-  ```
-  void show(){// 需要throws 
-    try{
-      throw new Exception();
-    }finally {
-      //释放资源
-    }
-  }
-  ```  
-## 运行时期异常
-  * RuntimeException和他的所有子类异常,都属于运行时期异常。NullPointerException,ArrayIndexOutOfBoundsException等都属于运行时期异常.
-  * 运行时期异常的特点:
-    1. 方法中抛出运行时期异常,方法定义中无需throws声明,调用者也无需处理此异常  
-    2. 运行时期异常一旦发生,需要程序人员修改源代码  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){
-      method();
-    }
-    public static void method(){
-      throw new RuntimeException();
-    }
-  }
-  ```  
-## 异常在方法重写中细节
-  * 子类覆盖父类方法时，如果父类的方法声明异常，子类只能声明父类异常或者该异常的子类，或者不声明  
-  ```
-  例如：
-  class Fu {
-    public void method () throws RuntimeException {
-  }
-  }
-  class Zi extends Fu {
-    public void method() throws RuntimeException { }  //抛出父类一样的异常
-    //public void method() throws NullPointerException{ } //抛出父类子异常
-  }
-  ```  
-  * 当父类方法声明多个异常时，子类覆盖时只能声明多个异常的子集  
-  ```
-  例如：
-  class Fu {
-    public void method () throws NullPointerException, ClassCastException{
-  }
-  }
-  class Zi extends Fu {
-    public void method()throws NullPointerException, ClassCastException { }
-    public void method() throws NullPointerException{ } //抛出父类异常中的一部分
-    public void method() throws ClassCastException { } //抛出父类异常中的一部分
-  }
-  ```  
-  * 当被覆盖的方法没有异常声明时，子类覆盖时无法声明异常的  
-  ```
-  例如：
-  class Fu {
-    public void method (){}
-  }
-  class Zi extends Fu {
-    public void method() throws Exception { }//错误的方式
-  }
-  ```  
-  举例：父类中会存在下列这种情况，接口也有这种情况  
-  问题：接口中没有声明异常，而实现的子类覆盖方法时发生了异常，怎么办？  
-  答：无法进行throws声明，只能catch的捕获。万一问题处理不了呢？catch中继续throw抛出，但是只能将异常转换成RuntimeException子类抛出。  
-  ```
-  interface Inter {
-    public abstract void method();
-  }
-  class Zi implements Inter {
-    public void method(){ //无法声明 throws Exception
-      int[] arr = null;
-      if (arr == null) {
-        //只能捕获处理
-        try {
-          throw new Exception("哥们，你定义的数组arr是空的!");
-        } catch(Exception e){
-          System.out.println("父方法中没有异常抛出，子类中不能抛出Exception异常");
-          //我们把异常对象e，采用RuntimeException异常方式抛出
-          throw new RuntimeException(e);
-        }
-      }
-    }
-  }
-  ```  
-## 异常中常用方法
-  在Throwable类中为我们提供了很多操作异常对象的方法，常用的如下：  
-  ![text](img/doc2107.png?raw=true)   
-  * getMessage方法：返回该异常的详细信息字符串，即异常提示信息
-  * toString方法：返回该异常的名称与详细信息字符串
-  * printStackTrace：在控制台输出该异常的名称与详细信息字符串、异常出现的代码位置  
-  异常的常用方法代码演示：
-  ```
-  try {
-    Person p= null;
-    if (p==null) {
-      throw new NullPointerException("出现空指针异常了，请检查对象是否为null");
-    }
-  } catch (NullPointerException e) {
-    String message = e.getMesage();
-    System.out.println(message ); 
-    
-    String result = e.toString();
-    System.out.println(result);	
-    
-    e.printStackTrace(); 
-  }
-  ```  
-# 定义异常
-  在上述代码中，发现这些异常都是JDK内部定义好的，并且这些异常不好找。书写时也很不方便，那么能不能自己定义异常呢？  
-  之前的几个异常都是java通过类进行的描述。并将问题封装成对象，异常就是将问题封装成了对象。这些异常不好认，书写也很不方便，能不能定义一个符合我的程序要求的异常名称。既然JDK中是使用类在描述异常信息，那么我们也可以模拟Java的这种机制，我们自己定义异常的信息，异常的名字，让异常更符合自己程序的阅读。准确对自己所需要的异常进行类的描述。  
-## 自定义异常类的定义
-  通过阅读异常源代码：发现java中所有的异常类，都是继承Throwable，或者继承Throwable的子类。这样该异常才可以被throw抛出。  
-  说明这个异常体系具备一个特有的特性：可抛性：即可以被throw关键字操作。  
-  并且查阅异常子类源码，发现每个异常中都调用了父类的构造方法，把异常描述信息传递给了父类，让父类帮我们进行异常信息的封装。  
-  例如NullPointerException异常类源代码：  
-  ```
-  public class NullPointerException extends RuntimeException {
-    public NullPointerException() {
-      super();//调用父类构造方法
-    }
-    public NullPointerException(String s) {
-      super(s);//调用父类具有异常信息的构造方法
-    }
-  }
-  ```  
-  现在，我们来定义个自己的异常，即自定义异常。  
-  **格式**：  
-  ```
-  Class 异常名 extends Exception{ //或继承RuntimeException
-    public 异常名(){}
-    public 异常名(String s){ 
-      super(s); 
-    }
-  }
-  ```    
-  * 自定义异常继承Exception演示  
-  ```
-  class MyException extends Exception{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    public MyException(){
-      super();
-    }
-    public MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  * 自定义异常继承RuntimeException演示  
-  ```
-  class MyException extends RuntimeException{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    MyException(){
-      super();
-    }
-    MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  构造函数到底抛出这个NoAgeException是继承Exception呢？还是继承RuntimeException呢?  
-  * 继承Exception，必须要throws声明，一声明就告知调用者进行捕获，一旦问题处理了调用者的程序会继续执行。  
-  * 继承RuntimeExcpetion,不需要throws声明的，这时调用是不需要编写捕获代码的，因为调用根本就不知道有问题。一旦发生RuntimeExcpetion，调用者程序会停掉，并有jvm将信息显示到屏幕，让调用者看到问题，修正代码  
+}
+```
+## Vector集合
+Vector集合数据存储的结构是数组结构，为JDK中最早提供的集合。Vector中提供了一个独特的取出方式，就是枚举Enumeration，它其实就是早期的迭代器。此接口Enumeration的功能与 Iterator 接口的功能是类似的Vector集合已被ArrayList替代。枚举Enumeration已被迭代器Iterator替代。  
+* Vector常见的方法：  
+![text](img/doc1707.png?raw=true)  
+* Enumeration枚举常见的方法：  
+![text](img/doc1708.png?raw=true)  
+* Vector集合对ArrayList集合使用的对比  
+![text](img/doc1709.png?raw=true)  
+# Set接口
+Collection中可以存放重复元素，也可以不存放重复元素，那么我们知道List中是可以存放重复元素的。那么不重复元素给哪里存放呢？那就是Set接口，它里面的集合，所存储的元素就是不重复的。  
+## HashSet集合介绍
+查阅HashSet集合的API介绍：此类实现Set接口，由哈希表支持（实际上是一个 HashMap集合）。HashSet集合不能保证的迭代顺序与元素存储顺序相同。  
+HashSet集合，采用哈希表结构存储数据，保证元素唯一性的方式依赖于：hashCode()与equals()方法。  
+## HashSet集合存储数据的结构（哈希表）
+什么是哈希表呢？  
+哈希表底层使用的也是数组机制，数组中也存放对象，而这些对象往数组中存放时的位置比较特殊，当需要把这些对象给数组中存放时，那么会根据这些对象的特有数据结合相应的算法，计算出这个对象在数组中的位置，然后把这个对象存放在数组中。而这样的数组就称为哈希数组，即就是哈希表。  
+当向哈希表中存放元素时，需要根据元素的特有数据结合相应的算法，这个算法其实就是Object类中的hashCode方法。由于任何对象都是Object类的子类，所以任何对象有拥有这个方法。即就是在给哈希表中存放对象时，会调用对象的hashCode方法，算出对象在表中的存放位置，这里需要注意，如果两个对象hashCode方法算出结果一样，这样现象称为哈希冲突，这时会调用对象的equals方法，比较这两个对象是不是同一个对象，如果equals方法返回的是true，那么就不会把第二个对象存放在哈希表中，如果返回的是false，就会把这个值存放在哈希表中。  
+总结：保证HashSet集合元素的唯一，其实就是根据对象的hashCode和equals方法来决定的。如果我们往集合中存放自定义的对象，那么保证其唯一，就必须复写hashCode和equals方法建立属于当前对象的比较方式。 
+![text](img/doc1710.png?raw=true)   
+## HashSet存储JavaAPI中的类型元素
+给HashSet中存储JavaAPI中提供的类型元素时，不需要重写元素的hashCode和equals方法，因为这两个方法，在JavaAPI的每个类中已经重写完毕，如String类、Integer类等。  
+* 创建HashSet集合，存储String对象。
+```java
+public class HashSetDemo {
+	public static void main(String[] args) {
+		//创建HashSet对象
+		HashSet<String> hs = new HashSet<String>();
+		//给集合中添加自定义对象
+		hs.add("zhangsan");
+		hs.add("lisi");
+		hs.add("wangwu");
+		hs.add("zhangsan");
+		//取出集合中的每个元素
+		Iterator<String> it = hs.iterator();
+		while(it.hasNext()){
+			String s = it.next();
+			System.out.println(s);
+		}
+	}
+}
+```
+## HashSet存储自定义类型元素
+给HashSet中存放自定义类型元素时，需要重写对象中的hashCode和equals方法，建立自己的比较方式，才能保证HashSet集合中的对象唯一  
+* 创建自定义对象Student  
+```java
+public class Student {
+	private String name;
+	private int age;
+	public Student(String name, int age) {
+		super();
+		this.name = name;
+		this.age = age;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	@Override
+	public String toString() {
+		return "Student [name=" + name + ", age=" + age + "]";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + age;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if(!(obj instanceof Student)){
+			System.out.println("类型错误");
+			return false;
+		}
+		Student other = (Student) obj;
+		return this.age ==  other.age && this.name.equals(other.name);
+	}
+}
+```
+* 创建HashSet集合，存储Student对象
+```java
+public class HashSetDemo {
+	public static void main(String[] args) {
+		//创建HashSet对象
+		HashSet hs = new HashSet();
+		//给集合中添加自定义对象
+		hs.add(new Student("zhangsan",21));
+		hs.add(new Student("lisi",22));
+		hs.add(new Student("wangwu",23));
+		hs.add(new Student("zhangsan",21));
+		//取出集合中的每个元素
+		Iterator it = hs.iterator();
+		while(it.hasNext()){
+			Student s = (Student)it.next();
+			System.out.println(s);
+		}
+	}
+}
+```
+## LinkedHashSet
+我们知道HashSet保证元素唯一，可是元素存放进去是没有顺序的，那么我们要保证有序，怎么办呢？  
+在HashSet下面有一个子类LinkedHashSet，它是链表和哈希表组合的一个数据存储结构。  
+```java
+public class LinkedHashSetDemo {
+	public static void main(String[] args) {
+		Set<String> set = new LinkedHashSet<String>();
+		set.add("bbb");
+		set.add("aaa");
+		set.add("abc");
+		set.add("bbc");
+    Iterator it = set.iterator();
+		while (it.hasNext()) {
+			System.out.println(it.next());
+		}
+	}
+}
+```
+# 判断集合元素唯一的原理
+## ArrayList的contains方法判断元素是否重复原理
+![text](img/doc1711.png?raw=true)  
+ArrayList的contains方法会使用调用方法时，传入的元素的equals方法依次与集合中的旧元素所比较，从而根据返回的布尔值判断是否有重复元素。此时，当ArrayList存放自定义类型时，由于自定义类型在未重写equals方法前，判断是否重复的依据是地址值，所以如果想根据内容判断是否为重复元素，需要重写元素的equals方法。  
+## HashSet的add/contains等方法判断元素是否重复原理
+![text](img/doc1712.png?raw=true)  
+Set集合不能存放重复元素，其添加方法在添加时会判断是否有重复元素，有重复不添加，没重复则添加。  
+HashSet集合由于是无序的，其判断唯一的依据是元素类型的hashCode与equals方法的返回结果。规则如下：  
+先判断新元素与集合内已经有的旧元素的HashCode值  
+* 如果不同，说明是不同元素，添加到集合。
+* 如果相同，再判断equals比较结果。返回true则相同元素；返回false则不同元素，添加到集合。  
+所以，使用HashSet存储自定义类型，如果没有重写该类的hashCode与equals方法，则判断重复时，使用的是地址值，如果想通过内容比较元素是否相同，需要重写该元素类的hashcode与equals方法。
 # 总结
-  * 异常：就是程序中出现的不正常的现象(错误与异常)
-    + 异常的继承体系:  
-    Throwable: 它是所有错误与异常的超类（祖宗类）  
-    　| - Error 错误  
-    　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-    　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
-  * 异常处理的两种方式：
-    + 出现问题，自己解决 try…catch…finally
-    + 出现问题，别人解决 throws  
-  * 异常分类  
-  异常的根类是Throwable，其下有两个子类：Error与Exception，平常所说的异常指Exception。  
-    + 严重错误Error，无法通过处理的错误
-    + 编译时异常Exception，编译时无法编译通过。如日期格式化异常
-    + 运行时异常RuntimeException，是Exception的子类，运行时可能会报错，可以不处理。如空指针异常
-  * 异常基本操作
-    + 创建异常对象
-    + 抛出异常
-    + 处理异常：
-      - 捕获处理，将异常获取，使用try/catch做分支处理  
-        try{  
-          需要检测的异常；  
-        }  catch(异常对象) {  
-            通常我们只使用一个方法：printStackTrace打印异常信息  
-        }  
-      - 声明抛出处理，出现异常后不处理，声明抛出给调用者处理。  
-      方法声明上加throws  异常类名
-    + 注意：异常的处理，指处理异常的一种可能性，即有了异常处理的代码，不一定会产生异常。如果没有产生异常，则代码正常执行，如果产生了异常，则中断当前执行代码，执行异常处理代码。  
-  * 异常注意事项
-    + 多异常处理  
-      捕获处理：  
-      1多个异常可以分别处理  
-        2多个异常一次捕获多次处理  
-        3多个异常一次捕获，采用同一种方式处理  
-      声明抛出异常：  
-        声明上使用,一次声明多个异常  
-    + 运行时异常被抛出可以不处理。即不捕获也不声明抛出
-    + 如果父类抛出了多个异常,子类覆盖父类方法时,只能抛出相同的异常或者是他的子集
-    + 父类方法没有抛出异常，子类覆盖父类该方法时也不可抛出异常。此时子类产生该异常，只能捕获处理，不能声明抛出
-    + 当多异常处理时，捕获处理，前边的类不能是后边类的父类
-  * 自定义异常  
-    如果Java没有提供你需要的异常，则可以自定义异常类。  
-    定义方法：编译时异常继承Exception，运行时异常继承RuntimeException。  
+* List与Set集合的区别？
+  + List:
+    - 它是一个有序的集合(元素存与取的顺序相同)
+    - 它可以存储重复的元素			
+  + Set:
+    - 它是一个无序的集合(元素存与取的顺序可能不同)
+    - 它不能存储重复的元素 
+* List集合中的特有方法
+  + void add(int index, Object element) 将指定的元素，添加到该集合中的指定位置上
+  + Object get(int index)返回集合中指定位置的元素。
+  + Object remove(int index) 移除列表中指定位置的元素, 返回的是被移除的元素
+  + Object set(int index, Object element)用指定元素替换集合中指定位置的元素,返回值的更新前的元素
+* ArrayList:
+  + 底层数据结构是数组，查询快，增删慢
+* LinkedList:
+  + 底层数据结构是链表，查询慢，增删快
+* HashSet:
+  + 元素唯一，不能重复
+  + 底层结构是 哈希表结构
+  + 元素的存与取的顺序不能保证一致
+  + 如何保证元素的唯一的？
+  + 重写hashCode() 与 equals()方法
+* LinkedHashSet:
+  + 元素唯一不能重复
+  + 底层结构是 哈希表结构 + 链表结构
+  + 元素的存与取的顺序一致
