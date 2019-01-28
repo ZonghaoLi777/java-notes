@@ -1,423 +1,232 @@
-# 异常
-  什么是异常？Java代码运行时期发生的问题就是异常  
-  在Java中，把异常信息封装成了一个类。当出现了问题时，就会创建异常类对象并抛出异常相关的信息（如异常出现的位置、原因等）。
-## 异常的继承体系
-  在Java中使用Exception类来描述异常。  
-  ![text](img/doc2101.png?raw=true)  
-  查看API中Exception的描述，Exception 类及其子类是 Throwable 的一种形式，它用来表示java程序中可能会产生的异常，并要求对产生的异常进行合理的异常处理。  
-
-  继续观察，我们可以发现Exception有继承关系，它的父类是Throwable。Throwable是Java 语言中所有错误或异常的超类，即祖宗类。  
-  ![text](img/doc2102.png?raw=true)
-  ![text](img/doc2103.png?raw=true)  
-  另外，在异常Exception类中，有一个子类要特殊说明一下，RuntimeException子类，RuntimeException及其它的子类只能在Java程序运行过程中出现。  
-  ![text](img/doc2104.png?raw=true)  
-  我们再来观察Throwable类，能够发现与异常Exception平级的有一个Error，它是Throwable的子类，它用来表示java程序中可能会产生的严重错误。解决办法只有一个，修改代码避免Error错误的产生。  
-  ![text](img/doc2105.png?raw=true)  
-
-##### 异常继承体系总结:
-  Throwable: 它是所有错误与异常的超类（祖宗类）  
-  　| - Error 错误  
-  　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-  　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
-
-## 异常与错误的区别
-  **异常**：指程序在编译、运行期间发生了某种异常(XxxException)，我们可以对异常进行具体的处理。若不处理异常，程序将会结束运行  
-  
-  * 异常的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[3];
-    System.out.println(arr[0]);
-    System.out.println(arr[3]);
-    // 该句运行时发生了数组索引越界异常ArrayIndexOutOfBoundsException，由于没有处理异常，导致程序无法继续执行，程序结束。
-    System.out.println("over"); // 由于上面代码发生了异常，此句代码不会执行
-  }
-  ```  
-  **错误**：指程序在运行期间发生了某种错误(XxxError)，Error错误通常没有具体的处理方式，程序将会结束运行。Error错误的发生往往都是系统级别的问题，都是jvm所在系统发生的，并反馈给jvm的。我们无法针对处理，只能修正代码。  
-  * 错误的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[1024*1024*100];
-    // 该句运行时发生了内存溢出错误OutOfMemoryError，开辟了过大的数组空间，导致JVM在分配数组空间时超出了JVM内存空间，直接发生错误。
-  }
-  ```  
-## 异常的产生过程解析
-  先运行下面的程序，程序会产生一个数组索引越界异常ArrayIndexOfBoundsException。我们通过图解来解析下异常产生的过程。  
-  * 工具类
-  ```
-  class ArrayTools{
-    // 对给定的数组通过给定的角标获取元素。
-    public static int getElement(int[] arr, int index)	{
-      int element = arr[index];
-      return element;
-    }
-  }
-  ```  
-  * 测试类  
-  ```
-  class ExceptionDemo2 {
-    public static void main(String[] args) 	{
-      int[] arr = {34, 12, 67};
-      int num = ArrayTools.getElement(arr, 4)
-      System.out.println("num=" + num);
-      System.out.println("over");
-    }
-  }
-  ```  
-  * 上述程序执行过程图解：  
-  ![text](img/doc2106.png?raw=true)  
-## 抛出异常throw
-  在编写程序时，我们必须要考虑程序出现问题的情况。比如，在定义方法时，方法需要接受参数。那么，当调用方法使用接受到的参数时，首先需要先对参数数据进行合法的判断，数据若不合法，就应该告诉调用者，传递合法的数据进来。这时需要使用抛出异常的方式来告诉调用者。 
-  **在java中，提供了一个throw关键字，它用来抛出一个指定的异常对象。那么，抛出一个异常具体如何操作呢？**  
-  * 1. 创建一个异常对象。封装一些提示信息(信息可以自己编写)。
-  * 2. 需要将这个异常对象告知给调用者。怎么告知呢？怎么将这个异常对象传递到调用者处呢？通过关键字throw就可以完成。throw 异常对象；  
-  throw用在方法内，用来抛出一个异常对象，将这个异常对象传递到调用者处，并结束当前方法的执行。  
-  **使用格式**：  
-  例如：  
-  ```
-  throw new NullPointerException("要访问的arr数组不存在");
-  throw new ArrayIndexOutOfBoundsException("该索引在数组中不存在，已超出范围");
-  ```  
-  * 下面是异常类ArrayIndexOutOfBoundsException与NullPointerException的构造方法  
-  ![text](img/doc2107.png?raw=true)  
-
-  学习完抛出异常的格式后，我们通过下面程序演示下throw的使用。  
-  * 编写工具类，提供获取数组指定索引处的元素值  
-  ```
-  class ArrayTools{
-    //通过给定的数组，返回给定的索引对应的元素值。
-    public static int getElement(int[] arr,int index)	{
-      /**
-      * 若程序出了异常，JVM它会打包异常对象并抛出。但是它所提供的信息不够给力。
-      * 想要更清晰，需要自己抛出异常信息。
-      * 下面判断条件如果满足，当执行完throw抛出异常对象后，方法已经无法继续运算。
-      * 这时就会结束当前方法的执行，并将异常告知给调用者。
-      * 这时就需要通过异常来解决。
-      */
-      if(arr==null){
-        throw new NullPointerException("arr指向的数组不存在");
-      }
-      if(index<0 || index>=arr.length){
-        throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-      }
-      int element = arr[index];
-      return element;
-    }
-  }
-  ```  
-  * 测试类
-  ```
-  class ExceptionDemo3 {
-    public static void main(String[] args) {
-      int[] arr = {34,12,67}; //创建数组
-      int num = ArrayTools.getElement(null,2);// 调用方法，获取数组中指定索引处元素
-      //int num = ArrayTools.getElement(arr,5);// 调用方法，获取数组中指定索引处元素
-      System.out.println("num="+num);//打印获取到的元素值
-    }
-  }
-  ```
-## 声明异常throws
-  声明：将问题标识出来，报告给调用者。如果方法内通过throw抛出了编译时异常，而没有捕获处理（稍后讲解该方式），那么必须通过throws进行声明，让调用者去处理。  
-  声明异常格式：  
-  ```
-  修饰符 返回值类型 方法名(参数) throws 异常类名1,异常类名2… {   }
-  ```  
-  声明异常的代码演示：  
-  ```
-  class Demo{
-    /**
-    * 如果定义功能时有问题发生需要报告给调用者。可以通过在方法上使用throws关键字进行声明。
-    */
-    public void show(int x) throws Exception	{
-      if(x > 0){
-        throw new Exception();
-      } else {
-        System.out.println("show run");
-      }
-    }
-  }
-  ```  
-  throws用于进行异常类的声明，若该方法可能有多种异常情况产生，那么在throws后面可以写多个异常类，用逗号隔开。  
-  多个异常的情况，例如:  
-  ```
-  public static int getElement(int[] arr,int index) throws NullPointerException, ArrayIndexOutOfBoundsException {
-    if(arr == null){
-      throw new NullPointerException("arr指向的数组不存在");
-    }
-    if(index < 0 || index >= arr.length){
-      throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-    }
-    int element = arr[index];
-    return element;
-  }
-  ```  
-## 捕获异常try…catch…finally
-  捕获：Java中对异常有针对性的语句进行捕获，可以对出现的异常进行指定方式的处理  
-  **捕获异常格式：**  
-  ```
-  try {
-    //需要被检测的语句。
-  }
-  catch(异常类 变量) { //参数。
-    //异常的处理语句。
-  }
-  finally {
-    //一定会被执行的语句。
-  }
-  ```  
-  **try**：该代码块中编写可能产生异常的代码。  
-  **catch**：用来进行某种异常的捕获，实现对捕获到的异常进行处理。  
-  **finally**：有一些特定的代码无论异常是否发生，都需要执行。另外，因为异常会引发程序跳转，导致有些语句执行不到。而finally就是解决这个问题的，在finally代码块中存放的代码都是一定会被执行的。  
-  演示如下：  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){ //throws ArrayIndexOutOfBoundsException
-      try	{
-        int[] arr = new int[3];
-        System.out.println( arr[5] );// 会抛出ArrayIndexOutOfBoundsException
-        当产生异常时，必须有处理方式。要么捕获，要么声明。
-      } catch (ArrayIndexOutOfBoundsException e) { //括号中需要定义什么呢？try中抛出的是什么异常，在括号中就定义什么异常类型。 
-        System.out.println("异常发生了");
-      } finally {
-        arr = null; //把数组指向null，通过垃圾回收器，进行内存垃圾的清除
-      }
-      System.out.println("程序运行结果");
-    }
-  }
-  ```  
-## try…catch…finally异常处理的组合方式  
-  * try catch finally组合：检测异常，并传递给catch处理，并在finally中进行资源释放。  
-  * try catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对异常进行捕获处理。 
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (Exception e){
-      //处理方式	
-    }
-  }
-  ```  
-  * 一个try 多个catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对每种异常信息进行不同的捕获处理。  
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (XxxException e) {
-      //处理方式	
-    } catch (YyyException e) {
-      //处理方式	
-    } catch (ZzzException e) {
-      //处理方式	
-    }
-  }
-  ```  
-  注意:这种异常处理方式，要求多个catch中的异常不能相同，并且若catch中的多个异常之间有子父类异常的关系，那么子类异常要求在上面的catch处理，父类异常在下面的catch处理。  
-  * try finally 组合: 对代码进行异常检测，检测到异常后因为没有catch，所以一样会被默认jvm抛出。异常是没有捕获处理的。但是功能所开启资源需要进行关闭，所有finally。只为关闭资源。  
-  ```
-  void show(){// 需要throws 
-    try{
-      throw new Exception();
-    }finally {
-      //释放资源
-    }
-  }
-  ```  
-## 运行时期异常
-  * RuntimeException和他的所有子类异常,都属于运行时期异常。NullPointerException,ArrayIndexOutOfBoundsException等都属于运行时期异常.
-  * 运行时期异常的特点:
-    1. 方法中抛出运行时期异常,方法定义中无需throws声明,调用者也无需处理此异常  
-    2. 运行时期异常一旦发生,需要程序人员修改源代码  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){
-      method();
-    }
-    public static void method(){
-      throw new RuntimeException();
-    }
-  }
-  ```  
-## 异常在方法重写中细节
-  * 子类覆盖父类方法时，如果父类的方法声明异常，子类只能声明父类异常或者该异常的子类，或者不声明  
-  ```
-  例如：
-  class Fu {
-    public void method () throws RuntimeException {
-  }
-  }
-  class Zi extends Fu {
-    public void method() throws RuntimeException { }  //抛出父类一样的异常
-    //public void method() throws NullPointerException{ } //抛出父类子异常
-  }
-  ```  
-  * 当父类方法声明多个异常时，子类覆盖时只能声明多个异常的子集  
-  ```
-  例如：
-  class Fu {
-    public void method () throws NullPointerException, ClassCastException{
-  }
-  }
-  class Zi extends Fu {
-    public void method()throws NullPointerException, ClassCastException { }
-    public void method() throws NullPointerException{ } //抛出父类异常中的一部分
-    public void method() throws ClassCastException { } //抛出父类异常中的一部分
-  }
-  ```  
-  * 当被覆盖的方法没有异常声明时，子类覆盖时无法声明异常的  
-  ```
-  例如：
-  class Fu {
-    public void method (){}
-  }
-  class Zi extends Fu {
-    public void method() throws Exception { }//错误的方式
-  }
-  ```  
-  举例：父类中会存在下列这种情况，接口也有这种情况  
-  问题：接口中没有声明异常，而实现的子类覆盖方法时发生了异常，怎么办？  
-  答：无法进行throws声明，只能catch的捕获。万一问题处理不了呢？catch中继续throw抛出，但是只能将异常转换成RuntimeException子类抛出。  
-  ```
-  interface Inter {
-    public abstract void method();
-  }
-  class Zi implements Inter {
-    public void method(){ //无法声明 throws Exception
-      int[] arr = null;
-      if (arr == null) {
-        //只能捕获处理
-        try {
-          throw new Exception("哥们，你定义的数组arr是空的!");
-        } catch(Exception e){
-          System.out.println("父方法中没有异常抛出，子类中不能抛出Exception异常");
-          //我们把异常对象e，采用RuntimeException异常方式抛出
-          throw new RuntimeException(e);
-        }
-      }
-    }
-  }
-  ```  
-## 异常中常用方法
-  在Throwable类中为我们提供了很多操作异常对象的方法，常用的如下：  
-  ![text](img/doc2107.png?raw=true)   
-  * getMessage方法：返回该异常的详细信息字符串，即异常提示信息
-  * toString方法：返回该异常的名称与详细信息字符串
-  * printStackTrace：在控制台输出该异常的名称与详细信息字符串、异常出现的代码位置  
-  异常的常用方法代码演示：
-  ```
-  try {
-    Person p= null;
-    if (p==null) {
-      throw new NullPointerException("出现空指针异常了，请检查对象是否为null");
-    }
-  } catch (NullPointerException e) {
-    String message = e.getMesage();
-    System.out.println(message ); 
+# 基本类型包装类
+java中提供了相应的对象来解决该问题，基本数据类型对象包装类：java将基本数据类型值封装成了对象。封装成对象有什么好处？可以提供更多的操作基本数值的功能。  
+8种基本类型对应的包装类如下：  
+![text](img/doc1601.png?raw=true)  
+其中需要注意int对应的是Integer，char对应的Character，其他6个都是基本类型首字母大写即可。
+基本数据类型对象包装类特点：用于在基本数据和字符串之间进行转换。  
+* 将字符串转成基本类型：   
+![text](img/doc1602.png?raw=true)  
+parseXXX(String s);其中XXX表示基本类型，参数为可以转成基本类型的字符串，如果字符串无法转成基本类型，将会发生数字转换的问题 NumberFormatException  
+```java
+System.out.println(Integer.parseInt("123") + 2);
+//打印结果为 125
+```
+* 将基本数值转成字符串有3种方式：
+  + 基本类型直接与””相连接即可；34+""
+  + 调用String的valueOf方法；String.valueOf(34)  
+    ![text](img/doc1603.png?raw=true)  
+  + 调用包装类中的toString方法；Integer.toString(34)  
+    ![text](img/doc1604.png?raw=true)  
+## 基本类型和对象转换
+使用int类型与Integer对象转换进行演示，其他基本类型转换方式相同  
+* 基本数值---->包装对象  
+![text](img/doc1605.png?raw=true)  
+```java
+Integer i = new Integer(4);//使用构造函数函数
+Integer ii = new Integer("4");//构造函数中可以传递一个数字字符串
+```
+![text](img/doc1606.png?raw=true)  
+```java
+Integer iii = Integer.valueOf(4);//使用包装类中的valueOf方法
+Integer iiii = Integer.valueOf("4");//使用包装类中的valueOf方法
+```
+* 包装对象---->基本数值  
+![text](img/doc1607.png?raw=true)  
+```java
+int num = i.intValue();
+```
+## 自动装箱拆箱
+在需要的情况下，基本类型与包装类型可以通用。有些时候我们必须使用引用数据类型时，可以传入基本数据类型。  
+基本类型可以使用运算符直接进行计算，但是引用类型不可以。而基本类型包装类作为引用类型的一种却可以计算，原因在于，Java”偷偷地”自动地进行了对象向基本数据类型的转换。  
+相对应的，引用数据类型变量的值必须是new出来的内存空间地址值，而我们可以将一个基本类型的值赋值给一个基本类型包装类的引用。原因同样在于Java又”偷偷地”自动地进行了基本数据类型向对象的转换。  
+* 自动拆箱：对象转成基本数值
+* 自动装箱：基本数值转成对象  
+```java
+Integer i = 4;//自动装箱。相当于Integer i = Integer.valueOf(4);
+i = i + 5;//等号右边：将i对象转成基本数值(自动拆箱) i.intValue() + 5; 加法运算完成后，再次装箱，把基本数值转成对象。
+```
+* 自动装箱(byte常量池)细节的演示  
+当数值在byte范围之内时，进行自动装箱，不会新创建对象空间而是使用原来已有的空间。  
+```java
+Integer a = new Integer(3);
+Integer b = new Integer(3);
+System.out.println(a==b);//false
+System.out.println(a.equals(b));//true
+System.out.println("---------------------");
+Integer x = 127;
+Integer y = 127;
+//在jdk1.5自动装箱时，如果数值在byte范围之内，不会新创建对象空间而是使用原来已有的空间。
+System.out.println(x==y); //true
+System.out.println(x.equals(y)); //true
+```
+# System类
+在API中System类介绍的比较简单，我们给出定义，System中代表程序所在系统，提供了对应的一些系统属性信息，和系统操作。  
+System类不能手动创建对象，因为构造方法被private修饰，阻止外界创建对象。System类中的都是static方法，类名访问即可。在JDK中，有许多这样的类。  
+## 常用方法
+![text](img/doc1608.png?raw=true)  
+* currentTimeMillis()	获取当前系统时间与1970年01月01日00:00点之间的毫秒差值
+* exit(int status) 用来结束正在运行的Java程序。参数传入一个数字即可。通常传入0记为正常状态，其他为异常状态
+* gc() 用来运行JVM中的垃圾回收器，完成内存中垃圾的清除。
+* getProperty(String key) 用来获取指定键(字符串名称)中所记录的系统属性信息  
+![text](img/doc1609.png?raw=true)  
+![text](img/doc1610.png?raw=true)  
+* arraycopy方法，用来实现将源数组部分元素复制到目标数组的指定位置  
+# Math类
+Math 类是包含用于执行基本数学运算的方法的数学工具类，如初等指数、对数、平方根和三角函数。  
+## 常用方法
+![text](img/doc1611.png?raw=true)  
+* abs方法,结果都为正数  
+```java
+double d1 = Math.abs(-5); // d1的值为5
+double d2 = Math.abs(5); // d2的值为5
+```
+* ceil方法，结果为比参数值大的最小整数的double值  
+```java
+double d1 = Math.ceil(3.3); //d1的值为 4.0
+double d2 = Math.ceil(-3.3); //d2的值为 -3.0
+double d3 = Math.ceil(5.1); // d3的值为 6.0
+```
+* floor方法，结果为比参数值小的最大整数的double值
+```java
+double d1 = Math.floor(3.3); //d1的值为3.0
+double d2 = Math.floor(-3.3); //d2的值为-4.0
+double d3 = Math.floor(5.1); //d3的值为 5.0
+```
+* max方法，返回两个参数值中较大的值
+```java
+double d1 = Math.max(3.3, 5.5); //d1的值为5.5
+double d2 = Math.max(-3.3, -5.5); //d2的值为-3.3
+```
+* min方法，返回两个参数值中较小的值
+```java
+double d1 = Math.min(3.3, 5.5); //d1的值为3.3
+double d2 = Math.max(-3.3, -5.5); //d2的值为-5.5
+```
+* pow方法，返回第一个参数的第二个参数次幂的值
+```java
+double d1 = Math.pow(2.0, 3.0); //d1的值为 8.0
+double d2 = Math.pow(3.0, 3.0); //d2的值为27.0
+```
+* round方法，返回参数值四舍五入的结果
+```java
+double d1 = Math.round(5.5); //d1的值为6.0
+double d2 = Math.round(5.4); //d2的值为5.0
+```
+* random方法，产生一个大于等于0.0且小于1.0的double小数
+```java
+double d1 = Math.random();
+```
+# Arrays类
+此类包含用来操作数组（比如排序和搜索）的各种方法。需要注意，如果指定数组引用为 null，则访问此类中的方法都会抛出空指针异常NullPointerException。  
+## 常用方法
+![text](img/doc1612.png?raw=true)  
+* sort方法，用来对指定数组中的元素进行排序（元素值从小到大进行排序）
+```java
+//源arr数组元素{1,5,9,3,7}, 进行排序后arr数组元素为{1,3,5,7,9}
+int[] arr = {1,5,9,3,7};
+Arrays.sort( arr );
+```
+* toString方法，用来返回指定数组元素内容的字符串形式
+```java
+int[] arr = {1,5,9,3,7};
+String str = Arrays.toString(arr); // str的值为[1, 3, 5, 7, 9]
+```
+* binarySearch方法，在指定数组中，查找给定元素值出现的位置。若没有查询到，返回位置为-1。要求该数组必须是个有序的数组。
+```java
+int[] arr = {1,3,4,5,6};
+int index = Arrays.binarySearch(arr, 4); //index的值为2
+int index2= Arrasy.binarySearch(arr, 2); //index2的值为-1
+```
+# 大数据运算
+java中long型为最大整数类型,对于超过long型的数据如何去表示呢.在Java的世界中,超过long型的整数已经不能被称为整数了,它们被封装成BigInteger对象.在BigInteger类中,实现四则运算都是方法来实现,并不是采用运算符.  
+![text](img/doc1613.png?raw=true)  
+构造方法中,采用字符串的形式给出整数四则运算代码：  
+```java
+public static void main(String[] args) {
+		//大数据封装为BigInteger对象
+    BigInteger big1 = new BigInteger("12345678909876543210");
+    BigInteger big2 = new BigInteger("98765432101234567890");
+    //add实现加法运算
+    BigInteger bigAdd = big1.add(big2);
+    //subtract实现减法运算
+    BigInteger bigSub = big1.subtract(big2);
+    //multiply实现乘法运算
+    BigInteger bigMul = big1.multiply(big2);
+    //divide实现除法运算
+    BigInteger bigDiv = big2.divide(big1);
+}
+```
+## BigDecimal
+在程序中执行下列代码,会出现什么问题?  
+System.out.println(0.09 + 0.01);  
+System.out.println(1.0 - 0.32);  
+System.out.println(1.015 * 100);  
+System.out.println(1.301 / 100);  
+double和float类型在运算中很容易丢失精度,造成数据的不准确性,Java提供我们BigDecimal类可以实现浮点数据的高精度运算  
+构造方法如下:  
+![text](img/doc1614.png?raw=true)  
+![text](img/doc1615.png?raw=true)  
+建议浮点数据以字符串形式给出,因为参数结果是可以预知的，实现加法减法乘法代码如下:   
+```java
+public static void main(String[] args) {
+    //大数据封装为BigDecimal对象
+    BigDecimal big1 = new BigDecimal("0.09");
+    BigDecimal big2 = new BigDecimal("0.01");
+    //add实现加法运算
+    BigDecimal bigAdd = big1.add(big2);
     
-    String result = e.toString();
-    System.out.println(result);	
+    BigDecimal big3 = new BigDecimal("1.0");
+    BigDecimal big4 = new BigDecimal("0.32");
+    //subtract实现减法运算
+    BigDecimal bigSub = big3.subtract(big4);
     
-    e.printStackTrace(); 
-  }
-  ```  
-# 定义异常
-  在上述代码中，发现这些异常都是JDK内部定义好的，并且这些异常不好找。书写时也很不方便，那么能不能自己定义异常呢？  
-  之前的几个异常都是java通过类进行的描述。并将问题封装成对象，异常就是将问题封装成了对象。这些异常不好认，书写也很不方便，能不能定义一个符合我的程序要求的异常名称。既然JDK中是使用类在描述异常信息，那么我们也可以模拟Java的这种机制，我们自己定义异常的信息，异常的名字，让异常更符合自己程序的阅读。准确对自己所需要的异常进行类的描述。  
-## 自定义异常类的定义
-  通过阅读异常源代码：发现java中所有的异常类，都是继承Throwable，或者继承Throwable的子类。这样该异常才可以被throw抛出。  
-  说明这个异常体系具备一个特有的特性：可抛性：即可以被throw关键字操作。  
-  并且查阅异常子类源码，发现每个异常中都调用了父类的构造方法，把异常描述信息传递给了父类，让父类帮我们进行异常信息的封装。  
-  例如NullPointerException异常类源代码：  
-  ```
-  public class NullPointerException extends RuntimeException {
-    public NullPointerException() {
-      super();//调用父类构造方法
-    }
-    public NullPointerException(String s) {
-      super(s);//调用父类具有异常信息的构造方法
-    }
-  }
-  ```  
-  现在，我们来定义个自己的异常，即自定义异常。  
-  **格式**：  
-  ```
-  Class 异常名 extends Exception{ //或继承RuntimeException
-    public 异常名(){}
-    public 异常名(String s){ 
-      super(s); 
-    }
-  }
-  ```    
-  * 自定义异常继承Exception演示  
-  ```
-  class MyException extends Exception{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    public MyException(){
-      super();
-    }
-    public MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  * 自定义异常继承RuntimeException演示  
-  ```
-  class MyException extends RuntimeException{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    MyException(){
-      super();
-    }
-    MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  构造函数到底抛出这个NoAgeException是继承Exception呢？还是继承RuntimeException呢?  
-  * 继承Exception，必须要throws声明，一声明就告知调用者进行捕获，一旦问题处理了调用者的程序会继续执行。  
-  * 继承RuntimeExcpetion,不需要throws声明的，这时调用是不需要编写捕获代码的，因为调用根本就不知道有问题。一旦发生RuntimeExcpetion，调用者程序会停掉，并有jvm将信息显示到屏幕，让调用者看到问题，修正代码  
+    BigDecimal big5 = new BigDecimal("1.105");
+    BigDecimal big6 = new BigDecimal("100");
+    //multiply实现乘法运算
+    BigDecimal bigMul = big5.multiply(big6);
+}
+```
+对于浮点数据的除法运算,和整数不同,可能出现无限不循环小数,因此需要对所需要的位数进行保留和选择舍入模式  
+![text](img/doc1616.png?raw=true)  
+![text](img/doc1617.png?raw=true)  
 # 总结
-  * 异常：就是程序中出现的不正常的现象(错误与异常)
-    + 异常的继承体系:  
-    Throwable: 它是所有错误与异常的超类（祖宗类）  
-    　| - Error 错误  
-    　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-    　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
-  * 异常处理的两种方式：
-    + 出现问题，自己解决 try…catch…finally
-    + 出现问题，别人解决 throws  
-  * 异常分类  
-  异常的根类是Throwable，其下有两个子类：Error与Exception，平常所说的异常指Exception。  
-    + 严重错误Error，无法通过处理的错误
-    + 编译时异常Exception，编译时无法编译通过。如日期格式化异常
-    + 运行时异常RuntimeException，是Exception的子类，运行时可能会报错，可以不处理。如空指针异常
-  * 异常基本操作
-    + 创建异常对象
-    + 抛出异常
-    + 处理异常：
-      - 捕获处理，将异常获取，使用try/catch做分支处理  
-        try{  
-          需要检测的异常；  
-        }  catch(异常对象) {  
-            通常我们只使用一个方法：printStackTrace打印异常信息  
-        }  
-      - 声明抛出处理，出现异常后不处理，声明抛出给调用者处理。  
-      方法声明上加throws  异常类名
-    + 注意：异常的处理，指处理异常的一种可能性，即有了异常处理的代码，不一定会产生异常。如果没有产生异常，则代码正常执行，如果产生了异常，则中断当前执行代码，执行异常处理代码。  
-  * 异常注意事项
-    + 多异常处理  
-      捕获处理：  
-      1多个异常可以分别处理  
-        2多个异常一次捕获多次处理  
-        3多个异常一次捕获，采用同一种方式处理  
-      声明抛出异常：  
-        声明上使用,一次声明多个异常  
-    + 运行时异常被抛出可以不处理。即不捕获也不声明抛出
-    + 如果父类抛出了多个异常,子类覆盖父类方法时,只能抛出相同的异常或者是他的子集
-    + 父类方法没有抛出异常，子类覆盖父类该方法时也不可抛出异常。此时子类产生该异常，只能捕获处理，不能声明抛出
-    + 当多异常处理时，捕获处理，前边的类不能是后边类的父类
-  * 自定义异常  
-    如果Java没有提供你需要的异常，则可以自定义异常类。  
-    定义方法：编译时异常继承Exception，运行时异常继承RuntimeException。  
+* 基本类型包装类
+  + 8种基本类型对应的包装类
+  + 基本类型		包装类
+  + byte				Byte
+  + short			Short
+  + int				Integer
+  + log				Long
+  + float				Float
+  + double			Double
+  + char				Character
+  + boolean			Boolean
+  + 自动装箱、自动拆箱
+    - 自动装箱：基本数值转成对象（int  Integer）
+    - 自动拆箱：对象转成基本数值（Integer  int）
+  + 常用方法
+    - public int parseInt(String str):把字符串转成基本类型int
+    - public static String toString(int x):把基本类型int转成字符串
+    - public static Integer valueOf(int x):把基本类型i字符串转成Integer对象
+    - public int intValue():以 int类型返回该包装类对象的值
+
+* System类: 系统属性信息工具类
+  + public static long currentTimeMillis()：获取当前系统时间与1970年01月01日00:00点之间的毫秒差值
+  + public static void exit(int status)：用来结束正在运行的Java程序。参数传入一个数字即可。通常传入0记为正常状态，其他为异常状态
+  + public static void gc()：用来运行JVM中的垃圾回收器，完成内存中垃圾的清除。
+  + public static String getProperties()：用来获取指系统属性信息
+
+* Arrays类：数组操作工具类
+  + public static void sort方法，用来对指定数组中的元素进行排序（元素值从小到大进行排序）
+  + public static String toString方法，用来返回指定数组元素内容的字符串形式
+  + public static void binarySearch方法，在指定数组中，查找给定元素值出现的位置。若没有查询到，返回位置为-插入点-1。要求该数组必须是个有序的数组
+
+* Math类：数学运算工具类
+  + abs方法,结果都为正数
+  + ceil方法，结果为比参数值大的最小整数的double值
+  + floor方法，结果为比参数值小的最大整数的double值
+  + max方法，返回两个参数值中较大的值
+  + min方法，返回两个参数值中较小的值
+  + pow方法，返回第一个参数的第二个参数次幂的值
+  + round方法，返回参数值四舍五入的结果
+  + random方法，产生一个大于等于0.0且小于1.0的double小数
