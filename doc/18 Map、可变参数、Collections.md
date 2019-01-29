@@ -1,423 +1,272 @@
-# 异常
-  什么是异常？Java代码运行时期发生的问题就是异常  
-  在Java中，把异常信息封装成了一个类。当出现了问题时，就会创建异常类对象并抛出异常相关的信息（如异常出现的位置、原因等）。
-## 异常的继承体系
-  在Java中使用Exception类来描述异常。  
-  ![text](img/doc2101.png?raw=true)  
-  查看API中Exception的描述，Exception 类及其子类是 Throwable 的一种形式，它用来表示java程序中可能会产生的异常，并要求对产生的异常进行合理的异常处理。  
+# Map接口
+我们通过查看Map接口描述，发现Map接口下的集合与Collection接口下的集合，它们存储数据的形式不同，如下图。  
+* Collection中的集合，元素是孤立存在的（理解为单身），向集合中存储元素采用一个个元素的方式存储。
+* Map中的集合，元素是成对存在的(理解为夫妻)。每个元素由键与值两部分组成，通过键可以找对所对应的值。
+* Collection中的集合称为单列集合，Map中的集合称为双列集合。
+* 需要注意的是，Map中的集合不能包含重复的键，值可以重复；每个键只能对应一个值。
+* Map中常用的集合为HashMap集合、LinkedHashMap集合。
+![text](img/doc1801.png?raw=true)  
+## Map接口中常用集合概述
+通过查看Map接口描述，看到Map有多个子类，这里我们主要讲解常用的HashMap集合、LinkedHashMap集合。  
+* HashMap<K,V>：存储数据采用的哈希表结构，元素的存取顺序不能保证一致。由于要保证键的唯一、不重复，需要重写键的hashCode()方法、equals()方法。
+* LinkedHashMap<K,V>：HashMap下有个子类LinkedHashMap，存储数据采用的哈希表结构+链表结构。通过链表结构可以保证元素的存取顺序一致；通过哈希表结构可以保证的键的唯一、不重复，需要重写键的hashCode()方法、equals()方法。
+* 注意：Map接口中的集合都有两个泛型变量<K,V>,在使用时，要为两个泛型变量赋予数据类型。两个泛型变量<K,V>的数据类型可以相同，也可以不同。
+## Map接口中的常用方法
+![text](img/doc1802.png?raw=true)  
+* put方法：将指定的键与值对应起来，并添加到集合中
+  + 方法返回值为键所对应的值
+    - 使用put方法时，若指定的键(key)在集合中没有，则没有这个键对应的值，返回null，并把指定的键值添加到集合中；
+    - 使用put方法时，若指定的键(key)在集合中存在，则返回值为集合中键对应的值（该值为替换前的值），并把指定键所对应的值，替换成指定的新值。
+* get方法：获取指定键(key)所对应的值(value)
+* remove方法：根据指定的键(key)删除元素，返回被删除元素的值(value)。
+Map接口的方法演示  
+```java
+public class MapDemo {
+	public static void main(String[] args) {
+		//创建Map对象
+		Map<String, String> map = new HashMap<String,String>();
+		//给map中添加元素
+		map.put("星期一", "Monday");
+		map.put("星期日", "Sunday");
+		System.out.println(map); // {星期日=Sunday, 星期一=Monday}
 
-  继续观察，我们可以发现Exception有继承关系，它的父类是Throwable。Throwable是Java 语言中所有错误或异常的超类，即祖宗类。  
-  ![text](img/doc2102.png?raw=true)
-  ![text](img/doc2103.png?raw=true)  
-  另外，在异常Exception类中，有一个子类要特殊说明一下，RuntimeException子类，RuntimeException及其它的子类只能在Java程序运行过程中出现。  
-  ![text](img/doc2104.png?raw=true)  
-  我们再来观察Throwable类，能够发现与异常Exception平级的有一个Error，它是Throwable的子类，它用来表示java程序中可能会产生的严重错误。解决办法只有一个，修改代码避免Error错误的产生。  
-  ![text](img/doc2105.png?raw=true)  
+		//当给Map中添加元素，会返回key对应的原来的value值，若key没有对应的值，返回null
+		System.out.println(map.put("星期一", "Mon")); // Monday
+		System.out.println(map); // {星期日=Sunday, 星期一=Mon}
 
-##### 异常继承体系总结:
-  Throwable: 它是所有错误与异常的超类（祖宗类）  
-  　| - Error 错误  
-  　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-  　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
+		//根据指定的key获取对应的value
+		String en = map.get("星期日");
+		System.out.println(en); // Sunday
+		
+		//根据key删除元素,会返回key对应的value值
+		String value = map.remove("星期日");
+		System.out.println(value); // Sunday
+		System.out.println(map); // {星期一=Mon}
+	}
+}
+```
+## Map集合遍历键找值方式
+键找值方式：即通过元素中的键，获取键所对应的值  
+操作步骤与图解：  
+1.获取Map集合中所有的键，由于键是唯一的，所以返回一个Set集合存储所有的键  
+![text](img/doc1803.png?raw=true)  
+2.遍历键的Set集合，得到每一个键  
+3.根据键，获取键所对应的值  
+![text](img/doc1804.png?raw=true)  
+```java
+public class MapDemo {
+	public static void main(String[] args) {
+		//创建Map对象
+		Map<String, String> map = new HashMap<String,String>();
+		//给map中添加元素
+		map.put("邓超", "孙俪");
+		map.put("李晨", "范冰冰");
+    map.put("刘德华", "柳岩");
+		//获取Map中的所有key
+		Set<String> keySet = map.keySet();
+		//遍历存放所有key的Set集合
+		Iterator<String> it =keySet.iterator();
+		while(it.hasNext()){
+			//得到每一个key
+			String key = it.next();
+			//通过key获取对应的value
+			String value = map.get(key);
+			System.out.println(key+"="+value);
+		}
+	}
+}
+```
+## Entry键值对对象
+在Map类设计时，提供了一个嵌套接口：Entry。Entry将键值对的对应关系封装成了对象。即键值对对象，这样我们在遍历Map集合时，就可以从每一个键值对（Entry）对象中获取对应的键与对应的值。  
+![text](img/doc1805.png?raw=true)  
+* Entry是Map接口中提供的一个静态内部嵌套接口。  
+![text](img/doc1806.png?raw=true)  
+* getKey()方法：获取Entry对象中的键
+* getValue()方法：获取Entry对象中的值
+![text](img/doc1807.png?raw=true)  
+* entrySet()方法：用于返回Map集合中所有的键值对(Entry)对象，以Set集合形式返回。
+## Map集合遍历键值对方式
+键值对方式：即通过集合中每个键值对(Entry)对象，获取键值对(Entry)对象中的键与值。  
+操作步骤与图解：  
+1.获取Map集合中，所有的键值对(Entry)对象，以Set集合形式返回。
+![text](img/doc1808.png?raw=true)  
+2.遍历包含键值对(Entry)对象的Set集合，得到每一个键值对(Entry)对象  
+3.通过键值对(Entry)对象，获取Entry对象中的键与值。 
+![text](img/doc1809.png?raw=true)   
+![text](img/doc1810.png?raw=true)   
+```java
+public class MapDemo {
+	public static void main(String[] args) {
+		//创建Map对象
+		Map<String, String> map = new HashMap<String,String>();
+		//给map中添加元素
+		map.put("邓超", "孙俪");
+		map.put("李晨", "范冰冰");
+    map.put("刘德华", "柳岩");
+		//获取Map中的所有key与value的对应关系
+		Set<Map.Entry<String,String>> entrySet = map.entrySet();
+		//遍历Set集合
+		Iterator<Map.Entry<String,String>> it =entrySet.iterator();
+		while(it.hasNext()){
+			//得到每一对对应关系
+			Map.Entry<String,String> entry = it.next();
+			//通过每一对对应关系获取对应的key
+			String key = entry.getKey();
+			//通过每一对对应关系获取对应的value
+			String value = entry.getValue();
+			System.out.println(key+"="+value);
+		}
+	}
+}
+```
+注意：Map集合不能直接使用迭代器或者foreach进行遍历。但是转成Set之后就可以使用了。  
+## 静态导入
+在导包的过程中我们可以直接导入静态部分，这样某个类的静态成员就可以直接使用了。在源码中经常会出现静态导入。  
+静态导入格式：  
+import static XXX.YYY;   导入后YYY可直接使用。  
+## 可变参数
+在JDK1.5之后，如果我们定义一个方法需要接受多个参数，并且多个参数类型一致，我们可以对其简化成如下格式：  
+修饰符 返回值类型 方法名(参数类型... 形参名){  }  
+其实这个书写完全等价与  
+修饰符 返回值类型 方法名(参数类型[] 形参名){  }  
+只是后面这种定义，在调用时必须传递数组，而前者可以直接传递数据即可。  
+jdk1.5以后。出现了简化操作。... 用在参数上，称之为可变参数。  
+同样是代表数组，但是在调用这个带有可变参数的方法时，不用创建数组(这就是简单之处)，直接将数组中的元素作为实际参数进行传递，其实编译成的class文件，将这些元素先封装到一个数组中，在进行传递。这些动作都在编译.class文件时，自动完成了。  
+代码演示：      
+```java
+public class ParamDemo {
+	public static void main(String[] args) {
+		int[] arr = {21,89,32};
+		int sum = add(arr);
+		System.out.println(sum);
+		sum = add(21,89,32);//可变参数调用形式
+		System.out.println(sum);
+		
+	}
 
-## 异常与错误的区别
-  **异常**：指程序在编译、运行期间发生了某种异常(XxxException)，我们可以对异常进行具体的处理。若不处理异常，程序将会结束运行  
-  
-  * 异常的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[3];
-    System.out.println(arr[0]);
-    System.out.println(arr[3]);
-    // 该句运行时发生了数组索引越界异常ArrayIndexOutOfBoundsException，由于没有处理异常，导致程序无法继续执行，程序结束。
-    System.out.println("over"); // 由于上面代码发生了异常，此句代码不会执行
-  }
-  ```  
-  **错误**：指程序在运行期间发生了某种错误(XxxError)，Error错误通常没有具体的处理方式，程序将会结束运行。Error错误的发生往往都是系统级别的问题，都是jvm所在系统发生的，并反馈给jvm的。我们无法针对处理，只能修正代码。  
-  * 错误的产生演示如下：  
-  ```
-  public static void main(String[] args) {
-    int[] arr = new int[1024*1024*100];
-    // 该句运行时发生了内存溢出错误OutOfMemoryError，开辟了过大的数组空间，导致JVM在分配数组空间时超出了JVM内存空间，直接发生错误。
-  }
-  ```  
-## 异常的产生过程解析
-  先运行下面的程序，程序会产生一个数组索引越界异常ArrayIndexOfBoundsException。我们通过图解来解析下异常产生的过程。  
-  * 工具类
-  ```
-  class ArrayTools{
-    // 对给定的数组通过给定的角标获取元素。
-    public static int getElement(int[] arr, int index)	{
-      int element = arr[index];
-      return element;
-    }
-  }
-  ```  
-  * 测试类  
-  ```
-  class ExceptionDemo2 {
-    public static void main(String[] args) 	{
-      int[] arr = {34, 12, 67};
-      int num = ArrayTools.getElement(arr, 4)
-      System.out.println("num=" + num);
-      System.out.println("over");
-    }
-  }
-  ```  
-  * 上述程序执行过程图解：  
-  ![text](img/doc2106.png?raw=true)  
-## 抛出异常throw
-  在编写程序时，我们必须要考虑程序出现问题的情况。比如，在定义方法时，方法需要接受参数。那么，当调用方法使用接受到的参数时，首先需要先对参数数据进行合法的判断，数据若不合法，就应该告诉调用者，传递合法的数据进来。这时需要使用抛出异常的方式来告诉调用者。 
-  **在java中，提供了一个throw关键字，它用来抛出一个指定的异常对象。那么，抛出一个异常具体如何操作呢？**  
-  * 1. 创建一个异常对象。封装一些提示信息(信息可以自己编写)。
-  * 2. 需要将这个异常对象告知给调用者。怎么告知呢？怎么将这个异常对象传递到调用者处呢？通过关键字throw就可以完成。throw 异常对象；  
-  throw用在方法内，用来抛出一个异常对象，将这个异常对象传递到调用者处，并结束当前方法的执行。  
-  **使用格式**：  
-  例如：  
-  ```
-  throw new NullPointerException("要访问的arr数组不存在");
-  throw new ArrayIndexOutOfBoundsException("该索引在数组中不存在，已超出范围");
-  ```  
-  * 下面是异常类ArrayIndexOutOfBoundsException与NullPointerException的构造方法  
-  ![text](img/doc2107.png?raw=true)  
+	//JDK1.5之后写法
+	public static int add(int...arr){
+		int sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
+	}
 
-  学习完抛出异常的格式后，我们通过下面程序演示下throw的使用。  
-  * 编写工具类，提供获取数组指定索引处的元素值  
-  ```
-  class ArrayTools{
-    //通过给定的数组，返回给定的索引对应的元素值。
-    public static int getElement(int[] arr,int index)	{
-      /**
-      * 若程序出了异常，JVM它会打包异常对象并抛出。但是它所提供的信息不够给力。
-      * 想要更清晰，需要自己抛出异常信息。
-      * 下面判断条件如果满足，当执行完throw抛出异常对象后，方法已经无法继续运算。
-      * 这时就会结束当前方法的执行，并将异常告知给调用者。
-      * 这时就需要通过异常来解决。
-      */
-      if(arr==null){
-        throw new NullPointerException("arr指向的数组不存在");
-      }
-      if(index<0 || index>=arr.length){
-        throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-      }
-      int element = arr[index];
-      return element;
-    }
-  }
-  ```  
-  * 测试类
-  ```
-  class ExceptionDemo3 {
-    public static void main(String[] args) {
-      int[] arr = {34,12,67}; //创建数组
-      int num = ArrayTools.getElement(null,2);// 调用方法，获取数组中指定索引处元素
-      //int num = ArrayTools.getElement(arr,5);// 调用方法，获取数组中指定索引处元素
-      System.out.println("num="+num);//打印获取到的元素值
-    }
-  }
-  ```
-## 声明异常throws
-  声明：将问题标识出来，报告给调用者。如果方法内通过throw抛出了编译时异常，而没有捕获处理（稍后讲解该方式），那么必须通过throws进行声明，让调用者去处理。  
-  声明异常格式：  
-  ```
-  修饰符 返回值类型 方法名(参数) throws 异常类名1,异常类名2… {   }
-  ```  
-  声明异常的代码演示：  
-  ```
-  class Demo{
-    /**
-    * 如果定义功能时有问题发生需要报告给调用者。可以通过在方法上使用throws关键字进行声明。
-    */
-    public void show(int x) throws Exception	{
-      if(x > 0){
-        throw new Exception();
-      } else {
-        System.out.println("show run");
-      }
-    }
-  }
-  ```  
-  throws用于进行异常类的声明，若该方法可能有多种异常情况产生，那么在throws后面可以写多个异常类，用逗号隔开。  
-  多个异常的情况，例如:  
-  ```
-  public static int getElement(int[] arr,int index) throws NullPointerException, ArrayIndexOutOfBoundsException {
-    if(arr == null){
-      throw new NullPointerException("arr指向的数组不存在");
-    }
-    if(index < 0 || index >= arr.length){
-      throw new ArrayIndexOutOfBoundsException("错误的角标，"+index+"索引在数组中不存在");
-    }
-    int element = arr[index];
-    return element;
-  }
-  ```  
-## 捕获异常try…catch…finally
-  捕获：Java中对异常有针对性的语句进行捕获，可以对出现的异常进行指定方式的处理  
-  **捕获异常格式：**  
-  ```
-  try {
-    //需要被检测的语句。
-  }
-  catch(异常类 变量) { //参数。
-    //异常的处理语句。
-  }
-  finally {
-    //一定会被执行的语句。
-  }
-  ```  
-  **try**：该代码块中编写可能产生异常的代码。  
-  **catch**：用来进行某种异常的捕获，实现对捕获到的异常进行处理。  
-  **finally**：有一些特定的代码无论异常是否发生，都需要执行。另外，因为异常会引发程序跳转，导致有些语句执行不到。而finally就是解决这个问题的，在finally代码块中存放的代码都是一定会被执行的。  
-  演示如下：  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){ //throws ArrayIndexOutOfBoundsException
-      try	{
-        int[] arr = new int[3];
-        System.out.println( arr[5] );// 会抛出ArrayIndexOutOfBoundsException
-        当产生异常时，必须有处理方式。要么捕获，要么声明。
-      } catch (ArrayIndexOutOfBoundsException e) { //括号中需要定义什么呢？try中抛出的是什么异常，在括号中就定义什么异常类型。 
-        System.out.println("异常发生了");
-      } finally {
-        arr = null; //把数组指向null，通过垃圾回收器，进行内存垃圾的清除
-      }
-      System.out.println("程序运行结果");
-    }
-  }
-  ```  
-## try…catch…finally异常处理的组合方式  
-  * try catch finally组合：检测异常，并传递给catch处理，并在finally中进行资源释放。  
-  * try catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对异常进行捕获处理。 
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (Exception e){
-      //处理方式	
-    }
-  }
-  ```  
-  * 一个try 多个catch组合 : 对代码进行异常检测，并对检测的异常传递给catch处理。对每种异常信息进行不同的捕获处理。  
-  ```
-  void show(){ //不用throws 
-    try {
-      throw new Exception(); //产生异常，直接捕获处理
-    } catch (XxxException e) {
-      //处理方式	
-    } catch (YyyException e) {
-      //处理方式	
-    } catch (ZzzException e) {
-      //处理方式	
-    }
-  }
-  ```  
-  注意:这种异常处理方式，要求多个catch中的异常不能相同，并且若catch中的多个异常之间有子父类异常的关系，那么子类异常要求在上面的catch处理，父类异常在下面的catch处理。  
-  * try finally 组合: 对代码进行异常检测，检测到异常后因为没有catch，所以一样会被默认jvm抛出。异常是没有捕获处理的。但是功能所开启资源需要进行关闭，所有finally。只为关闭资源。  
-  ```
-  void show(){// 需要throws 
-    try{
-      throw new Exception();
-    }finally {
-      //释放资源
-    }
-  }
-  ```  
-## 运行时期异常
-  * RuntimeException和他的所有子类异常,都属于运行时期异常。NullPointerException,ArrayIndexOutOfBoundsException等都属于运行时期异常.
-  * 运行时期异常的特点:
-    1. 方法中抛出运行时期异常,方法定义中无需throws声明,调用者也无需处理此异常  
-    2. 运行时期异常一旦发生,需要程序人员修改源代码  
-  ```
-  class ExceptionDemo{
-    public static void main(String[] args){
-      method();
-    }
-    public static void method(){
-      throw new RuntimeException();
-    }
-  }
-  ```  
-## 异常在方法重写中细节
-  * 子类覆盖父类方法时，如果父类的方法声明异常，子类只能声明父类异常或者该异常的子类，或者不声明  
-  ```
-  例如：
-  class Fu {
-    public void method () throws RuntimeException {
-  }
-  }
-  class Zi extends Fu {
-    public void method() throws RuntimeException { }  //抛出父类一样的异常
-    //public void method() throws NullPointerException{ } //抛出父类子异常
-  }
-  ```  
-  * 当父类方法声明多个异常时，子类覆盖时只能声明多个异常的子集  
-  ```
-  例如：
-  class Fu {
-    public void method () throws NullPointerException, ClassCastException{
-  }
-  }
-  class Zi extends Fu {
-    public void method()throws NullPointerException, ClassCastException { }
-    public void method() throws NullPointerException{ } //抛出父类异常中的一部分
-    public void method() throws ClassCastException { } //抛出父类异常中的一部分
-  }
-  ```  
-  * 当被覆盖的方法没有异常声明时，子类覆盖时无法声明异常的  
-  ```
-  例如：
-  class Fu {
-    public void method (){}
-  }
-  class Zi extends Fu {
-    public void method() throws Exception { }//错误的方式
-  }
-  ```  
-  举例：父类中会存在下列这种情况，接口也有这种情况  
-  问题：接口中没有声明异常，而实现的子类覆盖方法时发生了异常，怎么办？  
-  答：无法进行throws声明，只能catch的捕获。万一问题处理不了呢？catch中继续throw抛出，但是只能将异常转换成RuntimeException子类抛出。  
-  ```
-  interface Inter {
-    public abstract void method();
-  }
-  class Zi implements Inter {
-    public void method(){ //无法声明 throws Exception
-      int[] arr = null;
-      if (arr == null) {
-        //只能捕获处理
-        try {
-          throw new Exception("哥们，你定义的数组arr是空的!");
-        } catch(Exception e){
-          System.out.println("父方法中没有异常抛出，子类中不能抛出Exception异常");
-          //我们把异常对象e，采用RuntimeException异常方式抛出
-          throw new RuntimeException(e);
-        }
-      }
-    }
-  }
-  ```  
-## 异常中常用方法
-  在Throwable类中为我们提供了很多操作异常对象的方法，常用的如下：  
-  ![text](img/doc2107.png?raw=true)   
-  * getMessage方法：返回该异常的详细信息字符串，即异常提示信息
-  * toString方法：返回该异常的名称与详细信息字符串
-  * printStackTrace：在控制台输出该异常的名称与详细信息字符串、异常出现的代码位置  
-  异常的常用方法代码演示：
-  ```
-  try {
-    Person p= null;
-    if (p==null) {
-      throw new NullPointerException("出现空指针异常了，请检查对象是否为null");
-    }
-  } catch (NullPointerException e) {
-    String message = e.getMesage();
-    System.out.println(message ); 
-    
-    String result = e.toString();
-    System.out.println(result);	
-    
-    e.printStackTrace(); 
-  }
-  ```  
-# 定义异常
-  在上述代码中，发现这些异常都是JDK内部定义好的，并且这些异常不好找。书写时也很不方便，那么能不能自己定义异常呢？  
-  之前的几个异常都是java通过类进行的描述。并将问题封装成对象，异常就是将问题封装成了对象。这些异常不好认，书写也很不方便，能不能定义一个符合我的程序要求的异常名称。既然JDK中是使用类在描述异常信息，那么我们也可以模拟Java的这种机制，我们自己定义异常的信息，异常的名字，让异常更符合自己程序的阅读。准确对自己所需要的异常进行类的描述。  
-## 自定义异常类的定义
-  通过阅读异常源代码：发现java中所有的异常类，都是继承Throwable，或者继承Throwable的子类。这样该异常才可以被throw抛出。  
-  说明这个异常体系具备一个特有的特性：可抛性：即可以被throw关键字操作。  
-  并且查阅异常子类源码，发现每个异常中都调用了父类的构造方法，把异常描述信息传递给了父类，让父类帮我们进行异常信息的封装。  
-  例如NullPointerException异常类源代码：  
-  ```
-  public class NullPointerException extends RuntimeException {
-    public NullPointerException() {
-      super();//调用父类构造方法
-    }
-    public NullPointerException(String s) {
-      super(s);//调用父类具有异常信息的构造方法
-    }
-  }
-  ```  
-  现在，我们来定义个自己的异常，即自定义异常。  
-  **格式**：  
-  ```
-  Class 异常名 extends Exception{ //或继承RuntimeException
-    public 异常名(){}
-    public 异常名(String s){ 
-      super(s); 
-    }
-  }
-  ```    
-  * 自定义异常继承Exception演示  
-  ```
-  class MyException extends Exception{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    public MyException(){
-      super();
-    }
-    public MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  * 自定义异常继承RuntimeException演示  
-  ```
-  class MyException extends RuntimeException{
-    /**
-    * 为什么要定义构造函数，因为看到Java中的异常描述类中有提供对异常对象的初始化方法。
-    */
-    MyException(){
-      super();
-    }
-    MyException(String message)	{
-      super(message);// 如果自定义异常需要异常信息，可以通过调用父类的带有字符串参数的构造函数即可。
-    }
-  }
-  ```  
-  构造函数到底抛出这个NoAgeException是继承Exception呢？还是继承RuntimeException呢?  
-  * 继承Exception，必须要throws声明，一声明就告知调用者进行捕获，一旦问题处理了调用者的程序会继续执行。  
-  * 继承RuntimeExcpetion,不需要throws声明的，这时调用是不需要编写捕获代码的，因为调用根本就不知道有问题。一旦发生RuntimeExcpetion，调用者程序会停掉，并有jvm将信息显示到屏幕，让调用者看到问题，修正代码  
+	//原始写法
+	/*
+	public static int add(int[] arr) {
+		int sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
+	}
+	*/
+}
+```
+* 上述add方法在同一个类中，只能存在一个。因为会发生调用的不确定性  
+注意：如果在方法书写时，这个方法拥有多参数，参数中包含可变参数，可变参数一定要写在参数列表的末尾位置。  
+## Collections集合工具类
+Collections是集合工具类，用来对集合进行操作。部分方法如下：  
+![text](img/doc1811.png?raw=true)   
+* public static <T> void sort(List<T> list) // 集合元素排序
+```java
+//排序前元素list集合元素 [33,11,77,55]
+Collections.sort( list );
+//排序后元素list集合元素 [11,33,55,77]
+```
+* public static void shuffle(List<?> list) //  集合元素存储位置打乱
+```java
+//list集合元素 [11,33,55,77]
+Collections.shuffle( list );
+//使用shuffle方法后，集合中的元素为[77,33,11,55]，每次执行该方法，集合中存储的元素位置都会随机打乱
+```
+## 集合嵌套
+集合嵌套并不是一个新的知识点，仅仅是集合内容又是集合，如Collection集合嵌套、Collection集合与Map集合相互嵌套、Map集合嵌套。  
+* ArrayList嵌套 ArrayList
+```java
+ArrayList< ArrayList<String> >
+Collection< ArrayList<Integer> >
+```
+* Map嵌套 ArrayList
+```java
+HashMap<String, ArrayList<Person>>
+ArrayList< HashMap<String, String>>
+```
+* Map集合嵌套
+```java
+HashMap<String, HashMap<String,String>>
+HashMap<String, HashMap<Person,String>>
+```
+## 集合继承体系的面向对象思想
+![text](img/doc1812.png?raw=true)   
+* 接口：用来明确所有集合中该具有的功能，相当于在定义集合功能标准；
+* 抽象类：把多个集合中功能实现方式相同的方法，抽取到抽象类实现，具体集合不再遍写，继承使用即可；
+* 具体类：继承抽象类，实现接口，重写所有抽象方法，达到具备指定功能的集合。每个具体集合类，根据自身的数据存储结构方式，对接口中的功能方法，进行不同方式的实现。  
 # 总结
-  * 异常：就是程序中出现的不正常的现象(错误与异常)
-    + 异常的继承体系:  
-    Throwable: 它是所有错误与异常的超类（祖宗类）  
-    　| - Error 错误  
-    　| - Exception 编译期异常,进行编译JAVA程序时出现的问题  
-    　　　　| - RuntimeException 运行期异常, JAVA程序运行过程中出现的问题  
-  * 异常处理的两种方式：
-    + 出现问题，自己解决 try…catch…finally
-    + 出现问题，别人解决 throws  
-  * 异常分类  
-  异常的根类是Throwable，其下有两个子类：Error与Exception，平常所说的异常指Exception。  
-    + 严重错误Error，无法通过处理的错误
-    + 编译时异常Exception，编译时无法编译通过。如日期格式化异常
-    + 运行时异常RuntimeException，是Exception的子类，运行时可能会报错，可以不处理。如空指针异常
-  * 异常基本操作
-    + 创建异常对象
-    + 抛出异常
-    + 处理异常：
-      - 捕获处理，将异常获取，使用try/catch做分支处理  
-        try{  
-          需要检测的异常；  
-        }  catch(异常对象) {  
-            通常我们只使用一个方法：printStackTrace打印异常信息  
-        }  
-      - 声明抛出处理，出现异常后不处理，声明抛出给调用者处理。  
-      方法声明上加throws  异常类名
-    + 注意：异常的处理，指处理异常的一种可能性，即有了异常处理的代码，不一定会产生异常。如果没有产生异常，则代码正常执行，如果产生了异常，则中断当前执行代码，执行异常处理代码。  
-  * 异常注意事项
-    + 多异常处理  
-      捕获处理：  
-      1多个异常可以分别处理  
-        2多个异常一次捕获多次处理  
-        3多个异常一次捕获，采用同一种方式处理  
-      声明抛出异常：  
-        声明上使用,一次声明多个异常  
-    + 运行时异常被抛出可以不处理。即不捕获也不声明抛出
-    + 如果父类抛出了多个异常,子类覆盖父类方法时,只能抛出相同的异常或者是他的子集
-    + 父类方法没有抛出异常，子类覆盖父类该方法时也不可抛出异常。此时子类产生该异常，只能捕获处理，不能声明抛出
-    + 当多异常处理时，捕获处理，前边的类不能是后边类的父类
-  * 自定义异常  
-    如果Java没有提供你需要的异常，则可以自定义异常类。  
-    定义方法：编译时异常继承Exception，运行时异常继承RuntimeException。  
+* Map集合: 
+  + map集合中的元素都是成对出现，成对存储的
+  + map集合中的元素都是以一对键和值的形式组成存在的，称为键值对，理解为夫妻对
+  + map集合中的键不能重复存储，值可以重复
+  + map集合中的每一个键 对应着一个值
+  + 方法：
+    - V put(K key, V value)  把指定的键与指定的值添加到Map集合中
+    - V remove(Object key) 把指定的键 所对应的键值对元素 在Map集合中删除，返回被删除元素的值
+    - Set<Map.Entry<K,V>> entrySet() 获取到Map集合中所有的键值对对象的集合(Set集合)
+    - V get(Object key) 根据指定的键，在Map集合中获取对应的值
+    - Set<K> keySet() 获取Map集合中所有的键，存储到Set集合中
+
+* Map集合遍历的两种方式
+  + 方式1：根据键找值的方式
+```java
+//a, 获取到Map集合中所有的键，返回对应的Set集合
+//b, 遍历键的集合，获取到每一个键
+//c, 通过键，找到对应的值
+  
+//获取到Map集合中所有的键，返回对应的Set集合
+Set<String> keys = map.keySet();
+//遍历键的集合，获取到每一个键
+
+for (String key : keys) {
+  //通过键，找到对应的值
+  Student s = map.get(key);
+  System.out.println( key + "..." + s.getName() + "..." + s.getAge() );
+}
+```
+
+  + 方式2：根据键值对对象找键和值的方式
+```java
+//a, 获取Map集合中所有的键值对元素,返回对应的Set集合
+//b, 遍历键值对元素集合，获取到每一个键值对元素对象
+//c, 通过键值对元素对象，获取对应的键，和对应的值
+
+//获取Map集合中所有的键值对元素,返回对应的Set集合
+Set< Map.Entry<String, Student>> entrySet = map.entrySet();
+//遍历键值对元素集合，获取到每一个键值对元素对象
+for (Map.Entry<String, Student> entry : entrySet) {
+  //通过键值对元素对象，获取对应的键，和对应的值
+  //找键
+  String key = entry.getKey();
+  //找值
+  Student s = entry.getValue();
+  //打印
+  System.out.println( key+"..."+s.getName()+"..."+s.getAge() );
+}
+```
+
+* HashMap:
+  + 特点：
+    - 是Map集合的子集合
+    - 底层采用哈希表结构
+    - HashMap集合中的key不能重复，通过重写hashCode() 与 equals()方法来保证键的唯一。
+    - 不能保证元素存与取的顺序完全一致
+* LinkedHashMap:
+  + 特点：
+    - 是HashMap集合的子集合
+    - 底层采用哈希表+链表结构
+    - LinkedHashMap集合中的key不能重复，通过重写hashCode() 与 equals()方法来保证键的唯一。
+
+* Collections中的方法：
+  + public static <T> void sort(List<T> list) 排序
+  + public static void shuffle(List<?> list) 集合中的元素存储位置随机打乱
