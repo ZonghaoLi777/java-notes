@@ -10,6 +10,7 @@
 # Hello World
   java程序编译和运行
   ![text](img/doc0102.png?raw=true)  
+  ![text](https://i2.hdslb.com/bfs/face/a32bd449bc313df15cb497f20cae0ab00d97a25d.jpg)
   * 源文件：编写Java源文件（我们也称之为源代码文件），它的扩展名为.java；
   * 编译：然后通过编译器把源文件编译成字节码文件，字节码文件扩展名为.class；
   * 运行：最后使用解释器来运行字节码文件。
